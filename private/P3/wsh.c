@@ -6,8 +6,10 @@
 
 void executeCommand(char **args) {
     if (strcmp(args[0], "exit") == 0) {
+        // exit
         exit(0);
     } else if (strcmp(args[0], "cd") == 0) {
+        // cd
         if (args[1] == NULL) {
             fprintf(stderr, "wsh: expected argument to \"cd\"\n");
         } else {
@@ -16,6 +18,7 @@ void executeCommand(char **args) {
             }
         }
     } else {
+        // execute
         pid_t pid = fork();
         if (pid == 0) {
             if (execvp(args[0], args) == -1) {
