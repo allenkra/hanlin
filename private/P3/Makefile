@@ -22,5 +22,7 @@ submit: pack
 
 # Add your own test target
 test: wsh
-	# Add commands to run your tests here
-	# For example: ./wsh < test_script.wsh
+	~cs537-1/tests/P3/test-cd.csh
+	~cs537-1/tests/P3/test-exec.csh
+	~cs537-1/tests/P3/test-job-control.csh
+	~cs537-1/tests/P3/test-pipe.csh
