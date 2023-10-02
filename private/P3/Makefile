@@ -5,8 +5,10 @@ LOGIN = hanlin
 SUBMITPATH = /home/cs537-1/handin/hanlin
 
 # Targets
-.PHONY: all
+.PHONY: all clean
 all: wsh
+clean:
+	rm -f wsh *.o *.tar.gz
 
 wsh: wsh.c wsh.h
 	$(CC) $(CFLAGS) -o $@ $^
