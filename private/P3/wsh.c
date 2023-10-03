@@ -23,7 +23,10 @@ void executeCommand(char **args) {
         // cd
         if (args[1] == NULL) {
             fprintf(stderr, "wsh: expected argument to \"cd\"\n");
-        } else {
+        } else if (args[2] != NULL) {
+            fprintf(stderr, "wsh: too many arguments to \"cd\"\n");
+        }
+        else {
             if (chdir(args[1]) != 0) {
                 perror("wsh");
             }
