@@ -66,9 +66,11 @@ int main(int argc, char *argv[]) {
         int i = 0;
 
         while (token != NULL) {
+            // get all args
             args[i++] = token;
-            token = strtok(NULL, " \t\n");
+            token = strtok(NULL, " \t\n"); // token get every element seperated by space and \t \n
         }
+        // mark the end
         args[i] = NULL;
 
         if (i > 0) {
@@ -77,7 +79,7 @@ int main(int argc, char *argv[]) {
     }
 
     free(line);
-
+    
     if (input != stdin) {
         fclose(input);
     }
