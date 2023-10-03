@@ -1,4 +1,3 @@
-# Variables
 CC = gcc
 CFLAGS = -Wall -Werror -pedantic -std=gnu18
 LOGIN = hanlin
@@ -22,9 +21,8 @@ pack:
 submit: pack
 	cp $(LOGIN).tar.gz $(SUBMITPATH)
 
-# Add your own test target
 test: wsh
 	~cs537-1/tests/P3/test-cd.csh -c
 	~cs537-1/tests/P3/test-exec.csh -v -c
-	~cs537-1/tests/P3/test-job-control.csh -v
-	~cs537-1/tests/P3/test-pipe.csh -v
+	~cs537-1/tests/P3/test-job-control.csh -v -c
+	~cs537-1/tests/P3/test-pipe.csh -v -c

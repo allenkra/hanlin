@@ -3,8 +3,19 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
-
+#include <sys/types.h>
 void executeCommand(char **args) {
+    int background = 0;
+
+    // Check if the last argument is "&" to run in background
+    for (int i = 0; args[i] != NULL; i++) {
+        if (strcmp(args[i], "&") == 0) {
+            background = 1;
+            args[i] = NULL;  // Remove the '&'
+            break;
+        }
+    }
+
     if (strcmp(args[0], "exit") == 0) {
         // exit
         exit(0);
@@ -21,17 +32,24 @@ void executeCommand(char **args) {
         // execute
         pid_t pid = fork();
         if (pid == 0) {
-            if (execvp(args[0], args) == -1) { 
+            // child process
+            if (execvp(args[0], args) == -1) {
                 perror("wsh");
             }
             exit(EXIT_FAILURE);
         } else if (pid < 0) {
+            // fork error
             perror("wsh");
         } else {
-            wait(NULL);
+            // shell wait for child
+            // background not wait
+            if (!background) {
+                waitpid(pid, NULL, 0);  // only wait if not running in background
+            }
         }
     }
 }
+
 
 int main(int argc, char *argv[]) {
     char *line = NULL;
