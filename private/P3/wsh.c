@@ -39,9 +39,11 @@ int main(int argc, char *argv[]) {
     FILE *input = stdin;
 
     if (argc > 2) {
+        // wrong beginning
         fprintf(stderr, "wsh: too many arguments\n");
         return 1;
     } else if (argc == 2) {
+        // open file to get command
         input = fopen(argv[1], "r");
         if (input == NULL) {
             perror("wsh");
@@ -55,6 +57,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (getline(&line, &len, input) == -1) {
+            // bad input
             break;
         }
 
