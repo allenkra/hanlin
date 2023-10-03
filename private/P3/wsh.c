@@ -21,7 +21,7 @@ void executeCommand(char **args) {
         // execute
         pid_t pid = fork();
         if (pid == 0) {
-            if (execvp(args[0], args) == -1) {
+            if (execvp(args[0], args) == -1) { 
                 perror("wsh");
             }
             exit(EXIT_FAILURE);

@@ -25,6 +25,6 @@ submit: pack
 # Add your own test target
 test: wsh
 	~cs537-1/tests/P3/test-cd.csh -c
-	~cs537-1/tests/P3/test-exec.csh -v 
+	~cs537-1/tests/P3/test-exec.csh -v -c
 	~cs537-1/tests/P3/test-job-control.csh -v
 	~cs537-1/tests/P3/test-pipe.csh -v
