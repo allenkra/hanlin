@@ -121,35 +121,37 @@ void executeCommand(char **args) {
         // Jobs
         print_jobs();
     } else if (strcmp(args[0], "fg") == 0 || strcmp(args[0], "bg") == 0) {
-        // FG and BG
         int job_id;
         if (args[1] == NULL) {
+            // no args
             job_id = get_max_job_id();
             if (job_id == 0) {
                 fprintf(stderr, "wsh: no current job\n");
                 return;
             }
         } else {
+            // 1 args
             job_id = atoi(args[1]);
         }
 
         job *j = get_job_by_id(job_id);
         if (j) {
             if (strcmp(args[0], "fg") == 0) {
-                // FG
-                tcsetpgrp(STDIN_FILENO, j->pgid);  
-                kill(-j->pgid, SIGCONT);  
-                int status;
-                waitpid(-j->pgid, &status, WUNTRACED);  
-                if (WIFSTOPPED(status)) {
-                    j->notified = 1;  
-                } else {
-                    remove_job(j->pgid);  
-                }
-                tcsetpgrp(STDIN_FILENO, getpgrp());  
-            } else {
-                // BG
-                kill(-j->pgid, SIGCONT);  
+            //     // FG
+            //     tcsetpgrp(STDIN_FILENO, j->pgid);
+            //     kill(-j->pgid, SIGCONT);
+            //     int status;
+            //     waitpid(-j->pgid, &status, WUNTRACED);
+            //     if (WIFSTOPPED(status)) {
+            //         j->notified = 1;
+            //     } else {
+            //         remove_job(j->pgid);
+            //     }
+            //     tcsetpgrp(STDIN_FILENO, getpgrp());
+            // } else {
+            //     // BG
+            //     kill(-j->pgid, SIGCONT);
+            //     printf("[%d] %d continued %s\n", j->job_id, j->pgid, j->command);
             }
         } else {
             fprintf(stderr, "wsh: job not found\n");
@@ -269,3 +271,5 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+// echo helloworld | grep hello
