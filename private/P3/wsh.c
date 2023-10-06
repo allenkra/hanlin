@@ -17,7 +17,6 @@ void handle_sigint(int sig) {
         // printf("%d ctrl+c",child_pid);
         child_pid = 0;
     } else {
-        fflush(stdout);
     }
 }
 
@@ -28,7 +27,6 @@ void handle_sigtstp(int sig) {
         // printf("%d ctrl+z",child_pid);
         child_pid = 0;
     } else {
-        fflush(stdout);
     }
 }
 
@@ -77,9 +75,15 @@ void remove_job(pid_t pgid) {
 void print_jobs() {
     // Print all jobs in the job list
     for (job *j = job_list; j; j = j->next) {
-        printf("[%d] %s\n", j->job_id, j->command);
+        printf("%d: ", j->job_id);
+        for (int i = 0; j->argv[i] != NULL && i < 128; i++) {
+            printf("%s ", j->argv[i]);
+        }
+        // printf("&");
+        printf("\n");
     }
 }
+
 
 void executeCommand(char **args) {
     int background = 0;
@@ -168,6 +172,14 @@ void executeCommand(char **args) {
                     // ctrl+z handler
                     job *j = malloc(sizeof(job));
                     j->command = strdup(args[0]);  // Save the command
+                    int i = 0;
+
+                    while (args[i] != NULL && i < 128) {
+                        j->argv[i] = strdup(args[i]);  // Copy each arg
+                        i++;
+                    }
+                    j->argv[i] = NULL;  // Null terminate the argv array
+
                     j->pgid = pid;  // Set the process group ID
                     j->job_id = get_max_job_id() + 1;  // Assign a new job ID
                     add_job(j);  // Add the job to the job list
@@ -177,6 +189,15 @@ void executeCommand(char **args) {
                 // background
                     job *j = malloc(sizeof(job));
                     j->command = strdup(args[0]);  // Save the command
+
+                    int i = 0;
+                    while (args[i] != NULL && i < 128) {
+                        j->argv[i] = strdup(args[i]);  // Copy each arg
+                        i++;
+                    }
+                    j->argv[i] = "&";  // background mark
+                    j->argv[i+1] = NULL;
+
                     j->pgid = pid;  // Set the process group ID
                     j->job_id = get_max_job_id() + 1;  // Assign a new job ID
                     add_job(j);  // Add the job to the job list

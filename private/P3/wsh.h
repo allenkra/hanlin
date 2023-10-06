@@ -19,6 +19,7 @@ typedef struct job
 {
   struct job *next;           /* next active job */
   char *command;              /* command line, used for messages */
+  char *argv[128];
   process *first_process;     /* list of processes in this job */
   pid_t pgid;                 /* process group ID */
   char notified;              /* true if user told about stopped job */
