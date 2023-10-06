@@ -73,16 +73,21 @@ void remove_job(pid_t pgid) {
 }
 
 void print_jobs() {
-    // Print all jobs in the job list
-    for (job *j = job_list; j; j = j->next) {
-        printf("%d: ", j->job_id);
-        for (int i = 0; j->argv[i] != NULL && i < 128; i++) {
-            printf("%s ", j->argv[i]);
+    int maxJobId = get_max_job_id();
+
+    // Print all jobs in ascending order of job ID
+    for (int id = 1; id <= maxJobId; ++id) {
+        job *j = get_job_by_id(id);
+        if (j != NULL) {
+            printf("%d: ", j->job_id);
+            for (int i = 0; j->argv[i] != NULL && i < 128; i++) {
+                printf("%s ", j->argv[i]);
+            }
+            printf("\n");
         }
-        // printf("&");
-        printf("\n");
     }
 }
+
 
 
 void executeCommand(char **args) {
