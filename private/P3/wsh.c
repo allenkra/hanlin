@@ -10,6 +10,90 @@
 pid_t child_pid = 0;
 job *job_list = NULL;
 
+int execute_with_pipe(char **args) {
+    int pipefds[2]; // file descriptors for pipe
+    int isBackground = 0; // flag to check if command should be executed in the background
+
+    // Split the args into separate commands at each pipe
+    char **cmd1 = args;
+    char **cmd2 = NULL;
+
+    for (int i = 0; args[i] != NULL; i++) {
+        if (strcmp(args[i], "|") == 0) {
+            args[i] = NULL; // terminate the first command here
+            cmd2 = &args[i + 1]; // second command starts from the next element
+            break;
+        }
+        if (strcmp(args[i], "&") == 0) {
+            args[i] = NULL; // remove the '&' and mark for background execution
+            isBackground = 1;
+        }
+    }
+
+    if (cmd2 == NULL) {
+        fprintf(stderr, "wsh: pipe error\n");
+        return -1;
+    }
+
+    if (pipe(pipefds) == -1) {
+        perror("wsh");
+        return -1;
+    }
+
+    pid_t pid1 = fork();
+    if (pid1 == -1) {
+        perror("wsh");
+        return -1;
+    }
+
+    if (pid1 == 0) {
+        // Child 1 - will write to the pipe
+        close(pipefds[0]); // close reading end
+        dup2(pipefds[1], STDOUT_FILENO); // make stdout as writing end
+        close(pipefds[1]); // close the writing end descriptor after duplicating
+
+        if (execvp(cmd1[0], cmd1) == -1) {
+            perror("wsh");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    pid_t pid2 = fork();
+    if (pid2 == -1) {
+        perror("wsh");
+        return -1;
+    }
+
+    if (pid2 == 0) {
+        // Child 2 - will read from the pipe
+        close(pipefds[1]); // close writing end
+        dup2(pipefds[0], STDIN_FILENO); // make stdin as reading end
+        close(pipefds[0]); // close the reading end descriptor after duplicating
+
+        if (execvp(cmd2[0], cmd2) == -1) {
+            perror("wsh");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // Parent - close both ends of the pipe and wait for both children
+    close(pipefds[0]);
+    close(pipefds[1]);
+
+    if (!isBackground) {
+        waitpid(pid1, NULL, 0);
+        waitpid(pid2, NULL, 0);
+    } else {
+        // Handle background execution if necessary
+        // You can add these processes to the job list or handle them as required
+    }
+
+    return 0;
+}
+
+
+
+
 void handle_sigint(int sig) {
     // ctrl+c handler
     if (child_pid > 0) {
@@ -92,6 +176,18 @@ void print_jobs() {
 
 void executeCommand(char **args) {
     int background = 0;
+
+    int pipe_found = 0;
+    for (int i = 0; args[i] != NULL; i++) {
+        if (strcmp(args[i], "|") == 0) {
+            pipe_found = 1;
+            break;
+        }
+    }
+    if(pipe_found){
+        execute_with_pipe(args);
+        return;
+    }
 
     // Check if the last argument is "&" to run in background
     for (int i = 0; args[i] != NULL; i++) {
