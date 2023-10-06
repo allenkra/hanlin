@@ -39,6 +39,7 @@ void add_job(job *j);
 void remove_job(pid_t pgid);
 void print_jobs();
 void handle_sigint(int sig);
+void handle_sigtstp(int sig);
 job* get_job_by_id(int job_id);
 int get_max_job_id();
 #endif // WSH_H
