@@ -5,12 +5,16 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <signal.h>
+#include "wsh.h"
+
 pid_t child_pid = 0;
+job *job_list = NULL;
 
 void handle_sigint(int sig) {
+    // ctrl+c handler
     if (child_pid > 0) {
         kill(child_pid, SIGINT);
-        printf("%d ctrl+c",child_pid);
+        // printf("%d ctrl+c",child_pid);
         child_pid = 0;
     } else {
         fflush(stdout);
@@ -18,34 +22,82 @@ void handle_sigint(int sig) {
 }
 
 void handle_sigtstp(int sig) {
+    // ctrl+z handler
     if (child_pid > 0) {
         kill(child_pid, SIGSTOP);
-        printf("%d ctrl+z",child_pid);
+        // printf("%d ctrl+z",child_pid);
         child_pid = 0;
     } else {
         fflush(stdout);
     }
 }
 
+job* get_job_by_id(int job_id) {
+    for (job *j = job_list; j; j = j->next) {
+        if (j->job_id == job_id) {
+            return j;
+        }
+    }
+    return NULL;
+}
 
+int get_max_job_id() {
+    int max_id = 0;
+    for (job *j = job_list; j; j = j->next) {
+        if (j->job_id > max_id) {
+            max_id = j->job_id;
+        }
+    }
+    return max_id;
+}
+
+void add_job(job *j) {
+    // Add the job to the job list
+    j->next = job_list;
+    job_list = j;
+}
+
+void remove_job(pid_t pgid) {
+    // Remove the job from the job list
+    job *j, *prev = NULL;
+    for (j = job_list; j; j = j->next) {
+        if (j->pgid == pgid) {
+            if (prev) {
+                prev->next = j->next;
+            } else {
+                job_list = j->next;
+            }
+            free(j);
+            return;
+        }
+        prev = j;
+    }
+}
+
+void print_jobs() {
+    // Print all jobs in the job list
+    for (job *j = job_list; j; j = j->next) {
+        printf("[%d] %s\n", j->job_id, j->command);
+    }
+}
 
 void executeCommand(char **args) {
     int background = 0;
 
-    // check if the last argument is "&" to run in background
+    // Check if the last argument is "&" to run in background
     for (int i = 0; args[i] != NULL; i++) {
         if (strcmp(args[i], "&") == 0) {
             background = 1;
-            args[i] = NULL;  // remove the '&'
+            args[i] = NULL;  // Remove the '&'
             break;
         }
     }
 
     if (strcmp(args[0], "exit") == 0) {
-        // exit
+        // Exit
         exit(0);
     } else if (strcmp(args[0], "cd") == 0) {
-        // cd
+        // CD
         if (args[1] == NULL) {
             fprintf(stderr, "wsh: expected argument to \"cd\"\n");
         } else if (args[2] != NULL) {
@@ -56,30 +108,85 @@ void executeCommand(char **args) {
                 perror("wsh");
             }
         }
+    } else if (strcmp(args[0], "jobs") == 0) {
+        // Jobs
+        print_jobs();
+    } else if (strcmp(args[0], "fg") == 0 || strcmp(args[0], "bg") == 0) {
+        // FG and BG
+        int job_id;
+        if (args[1] == NULL) {
+            job_id = get_max_job_id();
+            if (job_id == 0) {
+                fprintf(stderr, "wsh: no current job\n");
+                return;
+            }
+        } else {
+            job_id = atoi(args[1]);
+        }
+
+        job *j = get_job_by_id(job_id);
+        if (j) {
+            if (strcmp(args[0], "fg") == 0) {
+                // FG
+                tcsetpgrp(STDIN_FILENO, j->pgid);  
+                kill(-j->pgid, SIGCONT);  
+                int status;
+                waitpid(-j->pgid, &status, WUNTRACED);  
+                if (WIFSTOPPED(status)) {
+                    j->notified = 1;  
+                } else {
+                    remove_job(j->pgid);  
+                }
+                tcsetpgrp(STDIN_FILENO, getpgrp());  
+            } else {
+                // BG
+                kill(-j->pgid, SIGCONT);  
+            }
+        } else {
+            fprintf(stderr, "wsh: job not found\n");
+        }
     } else {
-        // execute
+        // Execute other commands
         pid_t pid = fork();
         if (pid == 0) {
-            // child process
+            // Child process
             if (execvp(args[0], args) == -1) {
                 perror("wsh");
             }
             exit(EXIT_FAILURE);
         } else if (pid < 0) {
-            // fork error
+            // Fork error
             perror("wsh");
         } else {
-            // shell wait for child
-            // background not wait
+            // Parent process
             if (!background) {
                 child_pid = pid;
-                waitpid(pid, NULL, 0);  // foreground
+                int status;
+                waitpid(pid, &status, WUNTRACED);  // foreground
+
+                if (WIFSTOPPED(status)) {
+                    // ctrl+z handler
+                    job *j = malloc(sizeof(job));
+                    j->command = strdup(args[0]);  // Save the command
+                    j->pgid = pid;  // Set the process group ID
+                    j->job_id = get_max_job_id() + 1;  // Assign a new job ID
+                    add_job(j);  // Add the job to the job list
+                }
+            }
+            else {
+                // background
+                    job *j = malloc(sizeof(job));
+                    j->command = strdup(args[0]);  // Save the command
+                    j->pgid = pid;  // Set the process group ID
+                    j->job_id = get_max_job_id() + 1;  // Assign a new job ID
+                    add_job(j);  // Add the job to the job list
             }
         }
     }
 }
 
 
+// shell
 int main(int argc, char *argv[]) {
     signal(SIGINT, handle_sigint);  // handle CTRL+C
     signal(SIGTSTP, handle_sigtstp);
