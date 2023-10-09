@@ -10,18 +10,6 @@
 pid_t child_pid = 0;
 job *job_list = NULL;
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/wait.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/wait.h>
-
 int execute_with_pipe(char **args) {
     int pipefd[2];
     int pr_end = -1;
