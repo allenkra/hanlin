@@ -24,21 +24,20 @@ job *job_list = NULL;
 
 int execute_with_pipe(char **args) {
     int pipefd[2];
-    int prev_pipe_read_end = -1;
+    int pr_end = -1;
     pid_t pid;
-    char **current_command = args;
+    char **cur_cmd = args;
 
-    while (*current_command) {
-        char **next_command = current_command;
+    while (*cur_cmd) {
+        char **next_cmd = cur_cmd;
         int pipe_found = 0;
 
-        // Locate the next pipe or the end of the commands
-        while (*next_command && !pipe_found) {
-            if (strcmp(*next_command, "|") == 0) {
-                *next_command = NULL;
+        while (*next_cmd && !pipe_found) {
+            if (strcmp(*next_cmd, "|") == 0) {
+                *next_cmd = NULL;
                 pipe_found = 1;
             } else {
-                next_command++;
+                next_cmd++;
             }
         }
 
@@ -53,23 +52,24 @@ int execute_with_pipe(char **args) {
             if (pipe_found) dup2(pipefd[1], STDOUT_FILENO);
             close(pipefd[1]);
 
-            if (prev_pipe_read_end != -1) {
-                dup2(prev_pipe_read_end, STDIN_FILENO);
-                close(prev_pipe_read_end);
+            if (pr_end != -1) {
+                dup2(pr_end, STDIN_FILENO);
+                close(pr_end);
             }
 
-            if (execvp(*current_command, current_command) == -1) {
+            if (execvp(*cur_cmd, cur_cmd) == -1) {
                 perror("wsh");
                 exit(EXIT_FAILURE);
             }
         }
 
         close(pipefd[1]);
-        if (prev_pipe_read_end != -1) close(prev_pipe_read_end);
+        if (pr_end != -1) close(pr_end);
         if (!pipe_found) break;
 
-        prev_pipe_read_end = pipefd[0];
-        current_command = next_command + 1;
+        // pipe next
+        pr_end = pipefd[0];
+        cur_cmd = next_cmd + 1;
     }
 
     // Wait for all child processes to finish
