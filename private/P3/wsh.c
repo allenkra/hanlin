@@ -10,86 +10,74 @@
 pid_t child_pid = 0;
 job *job_list = NULL;
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
 int execute_with_pipe(char **args) {
-    int pipefds[2]; // file descriptors for pipe
-    int isBackground = 0; // flag to check if command should be executed in the background
+    int pipefd[2];
+    int prev_pipe_read_end = -1;
+    pid_t pid;
+    char **current_command = args;
 
-    // Split the args into separate commands at each pipe
-    char **cmd1 = args;
-    char **cmd2 = NULL;
+    while (*current_command) {
+        char **next_command = current_command;
+        int pipe_found = 0;
 
-    for (int i = 0; args[i] != NULL; i++) {
-        if (strcmp(args[i], "|") == 0) {
-            args[i] = NULL; // terminate the first command here
-            cmd2 = &args[i + 1]; // second command starts from the next element
-            break;
+        // Locate the next pipe or the end of the commands
+        while (*next_command && !pipe_found) {
+            if (strcmp(*next_command, "|") == 0) {
+                *next_command = NULL;
+                pipe_found = 1;
+            } else {
+                next_command++;
+            }
         }
-        if (strcmp(args[i], "&") == 0) {
-            args[i] = NULL; // remove the '&' and mark for background execution
-            isBackground = 1;
-        }
-    }
 
-    if (cmd2 == NULL) {
-        fprintf(stderr, "wsh: pipe error\n");
-        return -1;
-    }
-
-    if (pipe(pipefds) == -1) {
-        perror("wsh");
-        return -1;
-    }
-
-    pid_t pid1 = fork();
-    if (pid1 == -1) {
-        perror("wsh");
-        return -1;
-    }
-
-    if (pid1 == 0) {
-        // Child 1 - will write to the pipe
-        close(pipefds[0]); // close reading end
-        dup2(pipefds[1], STDOUT_FILENO); // make stdout as writing end
-        close(pipefds[1]); // close the writing end descriptor after duplicating
-
-        if (execvp(cmd1[0], cmd1) == -1) {
+        if (pipe(pipefd) == -1) {
             perror("wsh");
-            exit(EXIT_FAILURE);
+            return 1;
         }
-    }
 
-    pid_t pid2 = fork();
-    if (pid2 == -1) {
-        perror("wsh");
-        return -1;
-    }
+        if ((pid = fork()) == 0) {
+            // Child process
+            close(pipefd[0]);
+            if (pipe_found) dup2(pipefd[1], STDOUT_FILENO);
+            close(pipefd[1]);
 
-    if (pid2 == 0) {
-        // Child 2 - will read from the pipe
-        close(pipefds[1]); // close writing end
-        dup2(pipefds[0], STDIN_FILENO); // make stdin as reading end
-        close(pipefds[0]); // close the reading end descriptor after duplicating
+            if (prev_pipe_read_end != -1) {
+                dup2(prev_pipe_read_end, STDIN_FILENO);
+                close(prev_pipe_read_end);
+            }
 
-        if (execvp(cmd2[0], cmd2) == -1) {
-            perror("wsh");
-            exit(EXIT_FAILURE);
+            if (execvp(*current_command, current_command) == -1) {
+                perror("wsh");
+                exit(EXIT_FAILURE);
+            }
         }
+
+        close(pipefd[1]);
+        if (prev_pipe_read_end != -1) close(prev_pipe_read_end);
+        if (!pipe_found) break;
+
+        prev_pipe_read_end = pipefd[0];
+        current_command = next_command + 1;
     }
 
-    // Parent - close both ends of the pipe and wait for both children
-    close(pipefds[0]);
-    close(pipefds[1]);
+    // Wait for all child processes to finish
+    while (wait(NULL) > 0);
 
-    if (!isBackground) {
-        waitpid(pid1, NULL, 0);
-        waitpid(pid2, NULL, 0);
-    } else {
-        // Handle background execution if necessary
-        // You can add these processes to the job list or handle them as required
-    }
-
-    return 0;
+    return 0; // Assuming 0 for success
 }
+
 
 
 
