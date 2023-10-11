@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Werror -pedantic -std=gnu18
 LOGIN = hanlin
-SUBMITPATH = /home/cs537-1/handin/hanlin
+SUBMITPATH = /home/cs537-1/handin/hanlin/P3
 
 # Targets
 .PHONY: all clean
