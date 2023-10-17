@@ -23,6 +23,10 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int nice(int); // nice
+int getschedstate(struct pschedinfo *); // getschedstate
+
+
 
 // ulib.c
 int stat(const char*, struct stat*);

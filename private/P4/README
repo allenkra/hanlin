@@ -9,8 +9,7 @@ Email: hwang2377@wisc.edu
 TODO
 - modify sleep() syscall
 - new syscall nice()
-- new syscall getschedstate()
-- create psched.h done
+- new syscall getschedstate() MAY CHECK READ() and SYS_READ()
 
 Implementation
 Files I modified:

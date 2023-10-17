@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "psched.h"
 
 struct {
   struct spinlock lock;
@@ -531,4 +532,16 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+int nice(int n) {
+  // nice user code
+  // need to implement
+  return n;
+}
+
+int getschedstate(struct pschedinfo *psi) {
+  // getschedstate 
+  // need to implement
+  return 0;
 }
