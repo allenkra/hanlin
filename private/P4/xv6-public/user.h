@@ -1,3 +1,4 @@
+#include "psched.h"
 struct stat;
 struct rtcdate;
 
