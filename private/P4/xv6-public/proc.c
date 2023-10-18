@@ -345,6 +345,7 @@ scheduler(void)
       p->state = RUNNING;
 
       swtch(&(c->scheduler), p->context);
+      // switch back to scheduler from swtch
       switchkvm();
 
       // Process is done running for now.
@@ -378,6 +379,7 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
+  // switch
   swtch(&p->context, mycpu()->scheduler);
   mycpu()->intena = intena;
 }
@@ -535,13 +537,41 @@ procdump(void)
 }
 
 int nice(int n) {
-  // nice user code
-  // need to implement
-  return n;
+  // handle wrong input
+  if ( n < 0 || n > 20)
+    return -1;
+
+  int previous;
+  struct proc *curproc = myproc();
+
+  previous = curproc->nice;
+  curproc->nice = n;
+
+  // succesfully set and return
+  return previous;
 }
 
+
 int getschedstate(struct pschedinfo *psi) {
-  // getschedstate 
-  // need to implement
+  int i = 0;
+  acquire(&ptable.lock);
+
+  // fill the psi
+  for ( i = 0; i < NPROC; i++) {
+
+    if (&ptable.proc[i].state == UNUSED) {
+      psi->inuse[i] = 0;
+    }
+    else
+      psi->inuse[i] = 1;
+
+    psi->priority[i] = ptable.proc[i].priority;
+    psi->nice[i] = ptable.proc[i].nice;
+    psi->pid[i] = ptable.proc[i].pid;
+    psi->ticks[i] = ptable.proc[i].ticks;
+  }
+  release(&ptable.lock);
+
+  // successfully return
   return 0;
 }

@@ -103,9 +103,9 @@ int sys_nice(void) {
 int sys_getschedstate(void) {
   // need to implement
     struct pschedinfo *psi;
-    if(argptr(0, (void*)&psi, sizeof(*psi)) < 0)
+    if(argptr(0, (void*)&psi, sizeof(*psi)) < 0 || psi == 0)
         return -1;
 
-    return getschedstate(psi); // Assume you have a getschedstate function that handles the logic
+    return getschedstate(psi);
 }
 
