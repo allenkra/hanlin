@@ -344,6 +344,9 @@ scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
 
+      // update cpu usage
+      p->ticks++;
+
       swtch(&(c->scheduler), p->context);
       // switch back to scheduler from swtch
       switchkvm();
@@ -592,4 +595,19 @@ int getschedstate(struct pschedinfo *psi) {
 
   // successfully return
   return 0;
+}
+
+void priorityupdate() {
+  int i = 0;
+  acquire(&ptable.lock);
+
+  // update the priority
+  for ( i = 0; i < NPROC; i++) {
+    if( ptable.proc[i].state == UNUSED)
+      continue;
+    ptable.proc[i].ticks /= 2;
+    ptable.proc[i].priority = ptable.proc[i].ticks + ptable.proc[i].nice;
+  }
+  release(&ptable.lock);
+
 }

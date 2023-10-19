@@ -124,6 +124,7 @@ void            yield(void);
 int             nice(int n);
 int             getschedstate(struct pschedinfo *psi);
 void            wakeup2(void *chan);
+void            priorityupdate();
 
 // swtch.S
 void            swtch(struct context**, struct context*);
