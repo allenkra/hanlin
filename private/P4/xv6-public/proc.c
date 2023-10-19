@@ -463,8 +463,10 @@ wakeup1(void *chan)
   struct proc *p;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == SLEEPING && p->chan == chan)
+    if(p->state == SLEEPING && p->chan == chan){
+      //cprintf("p->stillsleep = %d\n", p->stillsleep);
       p->state = RUNNABLE;
+    }
 }
 
 // Wake up all processes sleeping on chan.
@@ -474,6 +476,22 @@ wakeup(void *chan)
   acquire(&ptable.lock);
   wakeup1(chan);
   release(&ptable.lock);
+}
+
+void
+wakeup2(void *chan)
+{
+    acquire(&ptable.lock);  
+    struct proc *p;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == SLEEPING && p->stillsleep > 0 && p->chan == chan){
+        p->stillsleep--;  // update sleep time
+        if(p->stillsleep == 0){
+          p->state = RUNNABLE;  // runnable
+        }
+      }
+    }
+    release(&ptable.lock);  
 }
 
 // Kill the process with the given pid.

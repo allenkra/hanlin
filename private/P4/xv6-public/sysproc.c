@@ -67,15 +67,23 @@ sys_sleep(void)
     return -1;
   acquire(&tickslock);
   ticks0 = ticks;
+
+  myproc()->stillsleep = n;
+  
   while(ticks - ticks0 < n){
     if(myproc()->killed){
       // keep checking if killed , sleep fail
+      // myproc()->stillsleep = 0;
       release(&tickslock);
       return -1;
     }
+    //myproc()->stillsleep = n - (ticks - ticks0);
     // normally sleep
     sleep(&ticks, &tickslock);
   }
+
+  // myproc()->stillsleep = 0;
+  
   release(&tickslock);
   return 0;
 }

@@ -51,6 +51,7 @@ struct proc {
   int priority;                // priority
   int nice;                    // nice
   int ticks;                   // ticks
+  int stillsleep;              // tick to sleep, 0 is over
   char name[16];               // Process name (debugging)
 };
 
