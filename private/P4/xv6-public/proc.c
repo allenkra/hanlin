@@ -562,13 +562,13 @@ int getschedstate(struct pschedinfo *psi) {
     if (&ptable.proc[i].state == UNUSED) {
       psi->inuse[i] = 0;
     }
-    else
+    else {
       psi->inuse[i] = 1;
-
-    psi->priority[i] = ptable.proc[i].priority;
-    psi->nice[i] = ptable.proc[i].nice;
-    psi->pid[i] = ptable.proc[i].pid;
-    psi->ticks[i] = ptable.proc[i].ticks;
+      psi->priority[i] = ptable.proc[i].priority;
+      psi->nice[i] = ptable.proc[i].nice;
+      psi->pid[i] = ptable.proc[i].pid;
+      psi->ticks[i] = ptable.proc[i].ticks;
+    }
   }
   release(&ptable.lock);
 

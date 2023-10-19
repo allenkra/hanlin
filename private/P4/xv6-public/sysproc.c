@@ -69,9 +69,11 @@ sys_sleep(void)
   ticks0 = ticks;
   while(ticks - ticks0 < n){
     if(myproc()->killed){
+      // keep checking if killed , sleep fail
       release(&tickslock);
       return -1;
     }
+    // normally sleep
     sleep(&ticks, &tickslock);
   }
   release(&tickslock);

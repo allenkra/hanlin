@@ -8,8 +8,8 @@ Email: hwang2377@wisc.edu
 
 TODO
 - modify sleep() syscall
-- new syscall nice()
-- new syscall getschedstate() MAY CHECK READ() and SYS_READ()
+- look into trap.c
+- modify scheduler
 
 Implementation
 Files I modified:
