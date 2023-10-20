@@ -344,8 +344,6 @@ scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
 
-      // update cpu usage
-      p->ticks++;
 
       swtch(&(c->scheduler), p->context);
       // switch back to scheduler from swtch
@@ -605,9 +603,33 @@ void priorityupdate() {
   for ( i = 0; i < NPROC; i++) {
     if( ptable.proc[i].state == UNUSED)
       continue;
-    ptable.proc[i].ticks /= 2;
-    ptable.proc[i].priority = ptable.proc[i].ticks + ptable.proc[i].nice;
+    ptable.proc[i].cpu /= 2;
+    ptable.proc[i].priority = ptable.proc[i].cpu / 2 + ptable.proc[i].nice;
   }
   release(&ptable.lock);
 
+}
+
+void cpuupdate() {
+  // struct proc *curproc = myproc();
+  // curproc->ticks++;
+  // curproc->cpu++;
+    acquire(&ptable.lock);
+    if(myproc()) {
+      myproc()->ticks++;
+      myproc()->cpu++;
+    }
+    release(&ptable.lock);   
+}
+
+
+void plogprint(int ticks) {
+  int i;
+  cprintf("ticks = %d \n", ticks);
+      for (i = 0; i < NPROC ; i++) {
+        if ( ptable.proc[i].state != UNUSED) {
+          cprintf("p_pid = %d, p->ticks = %d; ", ptable.proc[i].pid, ptable.proc[i].ticks);
+        }
+      }
+  cprintf("\n");
 }

@@ -54,6 +54,8 @@ trap(struct trapframe *tf)
       ticks++;
       wakeup2(&ticks);
       release(&tickslock);
+      cpuupdate(); // update the ticks and cpu
+      // plogprint(ticks); // info for plot
       // every 100 ticks 
       if(ticks % 100 == 0) {
         priorityupdate();

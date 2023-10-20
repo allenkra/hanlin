@@ -125,6 +125,8 @@ int             nice(int n);
 int             getschedstate(struct pschedinfo *psi);
 void            wakeup2(void *chan);
 void            priorityupdate();
+void            cpuupdate();
+void            plogprint(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
