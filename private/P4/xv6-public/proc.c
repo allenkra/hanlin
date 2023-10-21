@@ -321,11 +321,12 @@ wait(void)
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
 void
-scheduler(void)
-{
+scheduler(void) {
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
+  
+  static struct proc* lastPicked = 0;  // 记录上次被挑选的进程
   
   for(;;){
     // Enable interrupts on this processor.
@@ -333,30 +334,51 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+
+    int minPriority = 200;
+    struct proc* selectedProc = 0;
+
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
+      if(p->state != RUNNABLE || p->priority > minPriority)
         continue;
 
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
+      if(p->priority < minPriority) {
+        minPriority = p->priority;
+        selectedProc = p;
+        lastPicked = p;
+      } else if (p->priority == minPriority) {
+        // same priority
+        if(lastPicked && p == lastPicked) {
+          continue;
+        }
+        
+        if(!selectedProc) {
+          selectedProc = p;
+        }
+      }
+    }
 
-
-      swtch(&(c->scheduler), p->context);
-      // switch back to scheduler from swtch
+    // 如果找到了要运行的进程
+    if(selectedProc) {
+      // Switch to chosen process.
+      c->proc = selectedProc;
+      switchuvm(selectedProc);
+      selectedProc->state = RUNNING;
+      swtch(&(c->scheduler), selectedProc->context);
+      // Switch back to scheduler from swtch.
       switchkvm();
-
+      
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
-    }
-    release(&ptable.lock);
 
+      lastPicked = selectedProc;  // 更新上次被挑选的进程
+    }
+
+    release(&ptable.lock);
   }
 }
+
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
@@ -578,7 +600,7 @@ int getschedstate(struct pschedinfo *psi) {
   // fill the psi
   for ( i = 0; i < NPROC; i++) {
 
-    if (&ptable.proc[i].state == UNUSED) {
+    if (ptable.proc[i].state == UNUSED) {
       psi->inuse[i] = 0;
     }
     else {
