@@ -1,0 +1,836 @@
+starting build
+
+**********************************************************************
+
+Test build
+build xv6 using make
+
+**********************************************************************
+Trying to build project using make
+make xv6.img fs.img
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie -fno-pic -O -nostdinc -I. -c bootmain.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie -fno-pic -nostdinc -I. -c bootasm.S
+ld -m    elf_i386 -N -e start -Ttext 0x7C00 -o bootblock.o bootasm.o bootmain.o
+objdump -S bootblock.o > bootblock.asm
+objcopy -S -O binary -j .text bootblock.o bootblock
+./sign.pl bootblock
+boot block is 451 bytes (max 510)
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o bio.o bio.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o console.o console.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o exec.o exec.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o file.o file.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o fs.o fs.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o ide.o ide.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o ioapic.o ioapic.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o kalloc.o kalloc.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o kbd.o kbd.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o lapic.o lapic.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o log.o log.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o main.o main.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o mp.o mp.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o picirq.o picirq.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o pipe.o pipe.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o proc.o proc.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o sleeplock.o sleeplock.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o spinlock.o spinlock.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o string.o string.c
+gcc -m32 -gdwarf-2 -Wa,-divide   -c -o swtch.o swtch.S
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o syscall.o syscall.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o sysfile.o sysfile.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o sysproc.o sysproc.c
+gcc -m32 -gdwarf-2 -Wa,-divide   -c -o trapasm.o trapasm.S
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o trap.o trap.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o uart.o uart.c
+./vectors.pl > vectors.S
+gcc -m32 -gdwarf-2 -Wa,-divide   -c -o vectors.o vectors.S
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o vm.o vm.c
+gcc -m32 -gdwarf-2 -Wa,-divide   -c -o entry.o entry.S
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie -fno-pic -nostdinc -I. -c entryother.S
+ld -m    elf_i386 -N -e start -Ttext 0x7000 -o bootblockother.o entryother.o
+objcopy -S -O binary -j .text bootblockother.o entryother
+objdump -S bootblockother.o > entryother.asm
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie -nostdinc -I. -c initcode.S
+ld -m    elf_i386 -N -e start -Ttext 0 -o initcode.out initcode.o
+objcopy -S -O binary initcode.out initcode
+objdump -S initcode.o > initcode.asm
+ld -m    elf_i386 -T kernel.ld -o kernel entry.o bio.o console.o exec.o file.o fs.o ide.o ioapic.o kalloc.o kbd.o lapic.o log.o main.o mp.o picirq.o pipe.o proc.o sleeplock.o spinlock.o string.o swtch.o syscall.o sysfile.o sysproc.o trapasm.o trap.o uart.o vectors.o vm.o  -b binary initcode entryother
+objdump -S kernel > kernel.asm
+objdump -t kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > kernel.sym
+dd if=/dev/zero of=xv6.img count=10000
+10000+0 records in
+10000+0 records out
+5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.00987964 s, 518 MB/s
+dd if=bootblock of=xv6.img conv=notrunc
+1+0 records in
+1+0 records out
+512 bytes copied, 0.000143188 s, 3.6 MB/s
+dd if=kernel of=xv6.img seek=1 conv=notrunc
+292+1 records in
+292+1 records out
+149720 bytes (150 kB, 146 KiB) copied, 0.00022503 s, 665 MB/s
+gcc -Werror -Wall -o mkfs mkfs.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o ulib.o ulib.c
+gcc -m32 -gdwarf-2 -Wa,-divide   -c -o usys.o usys.S
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o printf.o printf.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o umalloc.o umalloc.c
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o cat.o cat.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _cat cat.o ulib.o usys.o printf.o umalloc.o
+objdump -S _cat > cat.asm
+objdump -t _cat | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > cat.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o echo.o echo.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _echo echo.o ulib.o usys.o printf.o umalloc.o
+objdump -S _echo > echo.asm
+objdump -t _echo | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > echo.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o forktest.o forktest.c
+# forktest has less library code linked in - needs to be small
+# in order to be able to max out the proc table.
+ld -m    elf_i386 -N -e main -Ttext 0 -o _forktest forktest.o ulib.o usys.o
+objdump -S _forktest > forktest.asm
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o grep.o grep.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _grep grep.o ulib.o usys.o printf.o umalloc.o
+objdump -S _grep > grep.asm
+objdump -t _grep | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > grep.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o init.o init.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _init init.o ulib.o usys.o printf.o umalloc.o
+objdump -S _init > init.asm
+objdump -t _init | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > init.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o kill.o kill.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _kill kill.o ulib.o usys.o printf.o umalloc.o
+objdump -S _kill > kill.asm
+objdump -t _kill | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > kill.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o ln.o ln.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _ln ln.o ulib.o usys.o printf.o umalloc.o
+objdump -S _ln > ln.asm
+objdump -t _ln | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > ln.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o ls.o ls.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _ls ls.o ulib.o usys.o printf.o umalloc.o
+objdump -S _ls > ls.asm
+objdump -t _ls | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > ls.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o mkdir.o mkdir.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _mkdir mkdir.o ulib.o usys.o printf.o umalloc.o
+objdump -S _mkdir > mkdir.asm
+objdump -t _mkdir | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > mkdir.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o rm.o rm.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _rm rm.o ulib.o usys.o printf.o umalloc.o
+objdump -S _rm > rm.asm
+objdump -t _rm | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > rm.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o sh.o sh.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _sh sh.o ulib.o usys.o printf.o umalloc.o
+objdump -S _sh > sh.asm
+objdump -t _sh | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > sh.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o stressfs.o stressfs.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _stressfs stressfs.o ulib.o usys.o printf.o umalloc.o
+objdump -S _stressfs > stressfs.asm
+objdump -t _stressfs | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > stressfs.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o usertests.o usertests.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _usertests usertests.o ulib.o usys.o printf.o umalloc.o
+objdump -S _usertests > usertests.asm
+objdump -t _usertests | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > usertests.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o wc.o wc.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _wc wc.o ulib.o usys.o printf.o umalloc.o
+objdump -S _wc > wc.asm
+objdump -t _wc | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > wc.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o zombie.o zombie.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _zombie zombie.o ulib.o usys.o printf.o umalloc.o
+objdump -S _zombie > zombie.asm
+objdump -t _zombie | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > zombie.sym
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o test_6.o test_6.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _test_6 test_6.o ulib.o usys.o printf.o umalloc.o
+objdump -S _test_6 > test_6.asm
+objdump -t _test_6 | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > test_6.sym
+./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_6
+nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
+balloc: first 496 blocks have been allocated
+balloc: write bitmap block at sector 58
+
+
+test build PASSED
+ (build xv6 using make)
+
+starting test_13
+
+**********************************************************************
+
+Test test_13
+Three process workload for scheduler graph
+
+**********************************************************************
+Running xv6 user progam /home/cs537-1/tests/P4/ctests/test_13.c
+Trying to build project using make
+make xv6.img fs.img
+/tmp/tmpayb4tx_3/p/Makefile
+/tmp/tmpayb4tx_3/p/Makefile.test
+make: 'xv6.img' is up to date.
+make: 'fs.img' is up to date.
+make qemu-nox CPUS=1
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O0 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
+objdump -S _tester > tester.asm
+objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
+./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_6
+nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
+balloc: first 521 blocks have been allocated
+balloc: write bitmap block at sector 58
+qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
+c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
+
+
+iPXE (https://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+1FF8B4A0+1FECB4A0 CA00
+Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
+
+
+Booting from Hard Disk..xv6...
+cpu0: starting 0
+ticks = 1, 1:0; 
+sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap start 58
+ticks = 2, 1:1; 
+init: starting sh
+ticks = 3, 1:2; , 2:0; 
+$ tester
+ticks = 4, 1:2; , 2:0; 
+ticks = 5, 1:2; , 2:0; 
+ticks = 6, 1:2; , 2:0; 
+ticks = 7, 1:2; , 2:0; 
+ticks = 8, 1:2; , 2:0; 
+testerticks = 9, 1:2; , 2:0; 
+ticks = 10, 1:2; , 2:0; 
+ticks = 11, 1:2; , 2:0; 
+ticks = 12, 1:2; , 2:0; 
+ticks = 13, 1:2; , 2:0; 
+
+ticks = 14, 1:2; , 2:1; , 3:0; 
+Spinning...
+ticks = 15, 1:2; , 2:1; , 3:1; , 4:0; 
+ticks = 16, 1:2; , 2:1; , 3:1; , 4:1; , 5:0; , 6:0; , 7:0; 
+ticks = 17, 1:2; , 2:1; , 3:1; , 4:1; , 5:1; , 6:0; , 7:0; 
+ticks = 18, 1:2; , 2:1; , 3:1; , 4:1; , 5:1; , 6:1; , 7:0; 
+ticks = 19, 1:2; , 2:1; , 3:1; , 4:1; , 5:1; , 6:1; , 7:1; 
+ticks = 20, 1:2; , 2:1; , 3:1; , 4:2; , 5:1; , 6:1; , 7:1; 
+ticks = 21, 1:2; , 2:1; , 3:1; , 4:2; , 5:2; , 6:1; , 7:1; 
+ticks = 22, 1:2; , 2:1; , 3:1; , 4:2; , 5:2; , 6:2; , 7:1; 
+ticks = 23, 1:2; , 2:1; , 3:1; , 4:2; , 5:2; , 6:2; , 7:2; 
+ticks = 24, 1:2; , 2:1; , 3:1; , 4:3; , 5:2; , 6:2; , 7:2; 
+ticks = 25, 1:2; , 2:1; , 3:1; , 4:3; , 5:3; , 6:2; , 7:2; 
+ticks = 26, 1:2; , 2:1; , 3:1; , 4:3; , 5:3; , 6:3; , 7:2; 
+ticks = 27, 1:2; , 2:1; , 3:1; , 4:3; , 5:3; , 6:3; , 7:3; 
+ticks = 28, 1:2; , 2:1; , 3:1; , 4:4; , 5:3; , 6:3; , 7:3; 
+ticks = 29, 1:2; , 2:1; , 3:1; , 4:4; , 5:4; , 6:3; , 7:3; 
+ticks = 30, 1:2; , 2:1; , 3:1; , 4:4; , 5:4; , 6:4; , 7:3; 
+ticks = 31, 1:2; , 2:1; , 3:1; , 4:4; , 5:4; , 6:4; , 7:4; 
+ticks = 32, 1:2; , 2:1; , 3:1; , 4:5; , 5:4; , 6:4; , 7:4; 
+ticks = 33, 1:2; , 2:1; , 3:1; , 4:5; , 5:5; , 6:4; , 7:4; 
+ticks = 34, 1:2; , 2:1; , 3:1; , 4:5; , 5:5; , 6:5; , 7:4; 
+ticks = 35, 1:2; , 2:1; , 3:1; , 4:5; , 5:5; , 6:5; , 7:5; 
+ticks = 36, 1:2; , 2:1; , 3:1; , 4:6; , 5:5; , 6:5; , 7:5; 
+ticks = 37, 1:2; , 2:1; , 3:1; , 4:6; , 5:6; , 6:5; , 7:5; 
+ticks = 38, 1:2; , 2:1; , 3:1; , 4:6; , 5:6; , 6:6; , 7:5; 
+ticks = 39, 1:2; , 2:1; , 3:1; , 4:6; , 5:6; , 6:6; , 7:6; 
+ticks = 40, 1:2; , 2:1; , 3:1; , 4:6; , 5:7; , 6:6; , 7:6; 
+ticks = 41, 1:2; , 2:1; , 3:1; , 4:6; , 5:7; , 6:6; , 7:7; 
+ticks = 42, 1:2; , 2:1; , 3:1; , 4:6; , 5:8; , 6:6; , 7:7; 
+ticks = 43, 1:2; , 2:1; , 3:1; , 4:6; , 5:8; , 6:6; , 7:8; 
+ticks = 44, 1:2; , 2:1; , 3:1; , 4:6; , 5:9; , 6:6; , 7:8; 
+ticks = 45, 1:2; , 2:1; , 3:1; , 4:6; , 5:9; , 6:6; , 7:9; 
+ticks = 46, 1:2; , 2:1; , 3:1; , 4:6; , 5:10; , 6:6; , 7:9; 
+ticks = 47, 1:2; , 2:1; , 3:1; , 4:6; , 5:10; , 6:6; , 7:10; 
+ticks = 48, 1:2; , 2:1; , 3:1; , 4:6; , 5:11; , 6:6; , 7:10; 
+ticks = 49, 1:2; , 2:1; , 3:1; , 4:6; , 5:11; , 6:6; , 7:11; 
+ticks = 50, 1:2; , 2:1; , 3:1; , 4:6; , 5:12; , 6:6; , 7:11; 
+ticks = 51, 1:2; , 2:1; , 3:1; , 4:6; , 5:12; , 6:6; , 7:12; 
+ticks = 52, 1:2; , 2:1; , 3:1; , 4:6; , 5:13; , 6:6; , 7:12; 
+ticks = 53, 1:2; , 2:1; , 3:1; , 4:6; , 5:13; , 6:6; , 7:13; 
+ticks = 54, 1:2; , 2:1; , 3:1; , 4:6; , 5:14; , 6:6; , 7:13; 
+ticks = 55, 1:2; , 2:1; , 3:1; , 4:6; , 5:14; , 6:6; , 7:14; 
+ticks = 56, 1:2; , 2:1; , 3:1; , 4:6; , 5:15; , 6:6; , 7:14; 
+ticks = 57, 1:2; , 2:1; , 3:1; , 4:6; , 5:15; , 6:6; , 7:15; 
+ticks = 58, 1:2; , 2:1; , 3:1; , 4:6; , 5:16; , 6:6; , 7:15; 
+ticks = 59, 1:2; , 2:1; , 3:1; , 4:6; , 5:16; , 6:6; , 7:16; 
+ticks = 60, 1:2; , 2:1; , 3:1; , 4:6; , 5:17; , 6:6; , 7:16; 
+ticks = 61, 1:2; , 2:1; , 3:1; , 4:6; , 5:17; , 6:6; , 7:17; 
+ticks = 62, 1:2; , 2:1; , 3:1; , 4:6; , 5:18; , 6:6; , 7:17; 
+ticks = 63, 1:2; , 2:1; , 3:1; , 4:6; , 5:18; , 6:6; , 7:18; 
+ticks = 64, 1:2; , 2:1; , 3:1; , 4:6; , 5:19; , 6:6; , 7:18; 
+ticks = 65, 1:2; , 2:1; , 3:1; , 4:6; , 5:19; , 6:6; , 7:19; 
+ticks = 66, 1:2; , 2:1; , 3:1; , 4:6; , 5:20; , 6:6; , 7:19; 
+ticks = 67, 1:2; , 2:1; , 3:1; , 4:6; , 5:20; , 6:6; , 7:20; 
+ticks = 68, 1:2; , 2:1; , 3:1; , 4:6; , 5:21; , 6:6; , 7:20; 
+ticks = 69, 1:2; , 2:1; , 3:1; , 4:6; , 5:21; , 6:6; , 7:21; 
+ticks = 70, 1:2; , 2:1; , 3:1; , 4:6; , 5:22; , 6:6; , 7:21; 
+ticks = 71, 1:2; , 2:1; , 3:1; , 4:6; , 5:22; , 6:6; , 7:22; 
+ticks = 72, 1:2; , 2:1; , 3:1; , 4:6; , 5:23; , 6:6; , 7:22; 
+ticks = 73, 1:2; , 2:1; , 3:1; , 4:6; , 5:23; , 6:6; , 7:23; 
+ticks = 74, 1:2; , 2:1; , 3:1; , 4:6; , 5:24; , 6:6; , 7:23; 
+ticks = 75, 1:2; , 2:1; , 3:1; , 4:6; , 5:24; , 6:6; , 7:24; 
+ticks = 76, 1:2; , 2:1; , 3:1; , 4:6; , 5:25; , 6:6; , 7:24; 
+ticks = 77, 1:2; , 2:1; , 3:1; , 4:6; , 5:25; , 6:6; , 7:25; 
+ticks = 78, 1:2; , 2:1; , 3:1; , 4:6; , 5:26; , 6:6; , 7:25; 
+ticks = 79, 1:2; , 2:1; , 3:1; , 4:6; , 5:26; , 6:6; , 7:26; 
+ticks = 80, 1:2; , 2:1; , 3:1; , 4:6; , 5:27; , 6:6; , 7:26; 
+ticks = 81, 1:2; , 2:1; , 3:1; , 4:6; , 5:27; , 6:6; , 7:27; 
+ticks = 82, 1:2; , 2:1; , 3:1; , 4:6; , 5:28; , 6:6; , 7:27; 
+ticks = 83, 1:2; , 2:1; , 3:1; , 4:6; , 5:28; , 6:6; , 7:28; 
+ticks = 84, 1:2; , 2:1; , 3:1; , 4:6; , 5:29; , 6:6; , 7:28; 
+ticks = 85, 1:2; , 2:1; , 3:1; , 4:6; , 5:29; , 6:6; , 7:29; 
+ticks = 86, 1:2; , 2:1; , 3:1; , 4:6; , 5:30; , 6:6; , 7:29; 
+ticks = 87, 1:2; , 2:1; , 3:1; , 4:6; , 5:30; , 6:6; , 7:30; 
+ticks = 88, 1:2; , 2:1; , 3:1; , 4:6; , 5:31; , 6:6; , 7:30; 
+ticks = 89, 1:2; , 2:1; , 3:1; , 4:6; , 5:31; , 6:6; , 7:31; 
+ticks = 90, 1:2; , 2:1; , 3:1; , 4:7; , 5:31; , 6:6; , 7:31; 
+ticks = 91, 1:2; , 2:1; , 3:1; , 4:7; , 5:32; , 6:6; , 7:31; 
+ticks = 92, 1:2; , 2:1; , 3:1; , 4:7; , 5:32; , 6:7; , 7:31; 
+ticks = 93, 1:2; , 2:1; , 3:1; , 4:7; , 5:32; , 6:7; , 7:32; 
+ticks = 94, 1:2; , 2:1; , 3:1; , 4:8; , 5:32; , 6:7; , 7:32; 
+ticks = 95, 1:2; , 2:1; , 3:1; , 4:8; , 5:33; , 6:7; , 7:32; 
+ticks = 96, 1:2; , 2:1; , 3:1; , 4:8; , 5:33; , 6:8; , 7:32; 
+ticks = 97, 1:2; , 2:1; , 3:1; , 4:8; , 5:33; , 6:8; , 7:33; 
+ticks = 98, 1:2; , 2:1; , 3:1; , 4:9; , 5:33; , 6:8; , 7:33; 
+ticks = 99, 1:2; , 2:1; , 3:1; , 4:9; , 5:34; , 6:8; , 7:33; 
+ticks = 100, 1:2; , 2:1; , 3:1; , 4:9; , 5:34; , 6:9; , 7:33; 
+ticks = 101, 1:2; , 2:1; , 3:1; , 4:9; , 5:34; , 6:9; , 7:34; 
+ticks = 102, 1:2; , 2:1; , 3:1; , 4:10; , 5:34; , 6:9; , 7:34; 
+ticks = 103, 1:2; , 2:1; , 3:1; , 4:10; , 5:35; , 6:9; , 7:34; 
+ticks = 104, 1:2; , 2:1; , 3:1; , 4:10; , 5:35; , 6:10; , 7:34; 
+ticks = 105, 1:2; , 2:1; , 3:1; , 4:10; , 5:35; , 6:10; , 7:35; 
+ticks = 106, 1:2; , 2:1; , 3:1; , 4:11; , 5:35; , 6:10; , 7:35; 
+ticks = 107, 1:2; , 2:1; , 3:1; , 4:11; , 5:36; , 6:10; , 7:35; 
+ticks = 108, 1:2; , 2:1; , 3:1; , 4:11; , 5:36; , 6:11; , 7:35; 
+ticks = 109, 1:2; , 2:1; , 3:1; , 4:11; , 5:36; , 6:11; , 7:36; 
+ticks = 110, 1:2; , 2:1; , 3:1; , 4:12; , 5:36; , 6:11; , 7:36; 
+ticks = 111, 1:2; , 2:1; , 3:1; , 4:12; , 5:37; , 6:11; , 7:36; 
+ticks = 112, 1:2; , 2:1; , 3:1; , 4:12; , 5:37; , 6:12; , 7:36; 
+ticks = 113, 1:2; , 2:1; , 3:1; , 4:12; , 5:37; , 6:12; , 7:37; 
+ticks = 114, 1:2; , 2:1; , 3:1; , 4:12; , 5:38; , 6:12; , 7:37; 
+ticks = 115, 1:2; , 2:1; , 3:1; , 4:12; , 5:38; , 6:12; , 7:38; 
+ticks = 116, 1:2; , 2:1; , 3:1; , 4:12; , 5:39; , 6:12; , 7:38; 
+ticks = 117, 1:2; , 2:1; , 3:1; , 4:12; , 5:39; , 6:12; , 7:39; 
+ticks = 118, 1:2; , 2:1; , 3:1; , 4:12; , 5:40; , 6:12; , 7:39; 
+ticks = 119, 1:2; , 2:1; , 3:1; , 4:12; , 5:40; , 6:12; , 7:40; 
+ticks = 120, 1:2; , 2:1; , 3:1; , 4:12; , 5:41; , 6:12; , 7:40; 
+ticks = 121, 1:2; , 2:1; , 3:1; , 4:12; , 5:41; , 6:12; , 7:41; 
+ticks = 122, 1:2; , 2:1; , 3:1; , 4:12; , 5:42; , 6:12; , 7:41; 
+ticks = 123, 1:2; , 2:1; , 3:1; , 4:12; , 5:42; , 6:12; , 7:42; 
+ticks = 124, 1:2; , 2:1; , 3:1; , 4:12; , 5:43; , 6:12; , 7:42; 
+ticks = 125, 1:2; , 2:1; , 3:1; , 4:12; , 5:43; , 6:12; , 7:43; 
+ticks = 126, 1:2; , 2:1; , 3:1; , 4:12; , 5:44; , 6:12; , 7:43; 
+ticks = 127, 1:2; , 2:1; , 3:1; , 4:12; , 5:44; , 6:12; , 7:44; 
+ticks = 128, 1:2; , 2:1; , 3:1; , 4:12; , 5:45; , 6:12; , 7:44; 
+ticks = 129, 1:2; , 2:1; , 3:1; , 4:12; , 5:45; , 6:12; , 7:45; 
+ticks = 130, 1:2; , 2:1; , 3:1; , 4:12; , 5:46; , 6:12; , 7:45; 
+ticks = 131, 1:2; , 2:1; , 3:1; , 4:12; , 5:46; , 6:12; , 7:46; 
+ticks = 132, 1:2; , 2:1; , 3:1; , 4:12; , 5:47; , 6:12; , 7:46; 
+ticks = 133, 1:2; , 2:1; , 3:1; , 4:12; , 5:47; , 6:12; , 7:47; 
+ticks = 134, 1:2; , 2:1; , 3:1; , 4:12; , 5:48; , 6:12; , 7:47; 
+ticks = 135, 1:2; , 2:1; , 3:1; , 4:12; , 5:48; , 6:12; , 7:48; 
+ticks = 136, 1:2; , 2:1; , 3:1; , 4:12; , 5:49; , 6:12; , 7:48; 
+ticks = 137, 1:2; , 2:1; , 3:1; , 4:12; , 5:49; , 6:12; , 7:49; 
+ticks = 138, 1:2; , 2:1; , 3:1; , 4:12; , 5:50; , 6:12; , 7:49; 
+ticks = 139, 1:2; , 2:1; , 3:1; , 4:12; , 5:50; , 6:12; , 7:50; 
+ticks = 140, 1:2; , 2:1; , 3:1; , 4:12; , 5:51; , 6:12; , 7:50; 
+ticks = 141, 1:2; , 2:1; , 3:1; , 4:12; , 5:51; , 6:12; , 7:51; 
+ticks = 142, 1:2; , 2:1; , 3:1; , 4:12; , 5:52; , 6:12; , 7:51; 
+ticks = 143, 1:2; , 2:1; , 3:1; , 4:12; , 5:52; , 6:12; , 7:52; 
+ticks = 144, 1:2; , 2:1; , 3:1; , 4:12; , 5:53; , 6:12; , 7:52; 
+ticks = 145, 1:2; , 2:1; , 3:1; , 4:12; , 5:53; , 6:12; , 7:53; 
+ticks = 146, 1:2; , 2:1; , 3:1; , 4:12; , 5:54; , 6:12; , 7:53; 
+ticks = 147, 1:2; , 2:1; , 3:1; , 4:12; , 5:54; , 6:12; , 7:54; 
+ticks = 148, 1:2; , 2:1; , 3:1; , 4:12; , 5:55; , 6:12; , 7:54; 
+ticks = 149, 1:2; , 2:1; , 3:1; , 4:12; , 5:55; , 6:12; , 7:55; 
+ticks = 150, 1:2; , 2:1; , 3:1; , 4:12; , 5:56; , 6:12; , 7:55; 
+ticks = 151, 1:2; , 2:1; , 3:1; , 4:12; , 5:56; , 6:12; , 7:56; 
+ticks = 152, 1:2; , 2:1; , 3:1; , 4:12; , 5:57; , 6:12; , 7:56; 
+ticks = 153, 1:2; , 2:1; , 3:1; , 4:12; , 5:57; , 6:12; , 7:57; 
+ticks = 154, 1:2; , 2:1; , 3:1; , 4:12; , 5:58; , 6:12; , 7:57; 
+ticks = 155, 1:2; , 2:1; , 3:1; , 4:12; , 5:58; , 6:12; , 7:58; 
+ticks = 156, 1:2; , 2:1; , 3:1; , 4:12; , 5:59; , 6:12; , 7:58; 
+ticks = 157, 1:2; , 2:1; , 3:1; , 4:12; , 5:59; , 6:12; , 7:59; 
+ticks = 158, 1:2; , 2:1; , 3:1; , 4:12; , 5:60; , 6:12; , 7:59; 
+ticks = 159, 1:2; , 2:1; , 3:1; , 4:12; , 5:60; , 6:12; , 7:60; 
+ticks = 160, 1:2; , 2:1; , 3:1; , 4:12; , 5:61; , 6:12; , 7:60; 
+ticks = 161, 1:2; , 2:1; , 3:1; , 4:12; , 5:61; , 6:12; , 7:61; 
+ticks = 162, 1:2; , 2:1; , 3:1; , 4:12; , 5:62; , 6:12; , 7:61; 
+ticks = 163, 1:2; , 2:1; , 3:1; , 4:12; , 5:62; , 6:12; , 7:62; 
+ticks = 164, 1:2; , 2:1; , 3:1; , 4:13; , 5:62; , 6:12; , 7:62; 
+ticks = 165, 1:2; , 2:1; , 3:1; , 4:13; , 5:63; , 6:12; , 7:62; 
+ticks = 166, 1:2; , 2:1; , 3:1; , 4:13; , 5:63; , 6:13; , 7:62; 
+ticks = 167, 1:2; , 2:1; , 3:1; , 4:13; , 5:63; , 6:13; , 7:63; 
+ticks = 168, 1:2; , 2:1; , 3:1; , 4:14; , 5:63; , 6:13; , 7:63; 
+ticks = 169, 1:2; , 2:1; , 3:1; , 4:14; , 5:64; , 6:13; , 7:63; 
+ticks = 170, 1:2; , 2:1; , 3:1; , 4:14; , 5:64; , 6:14; , 7:63; 
+ticks = 171, 1:2; , 2:1; , 3:1; , 4:14; , 5:64; , 6:14; , 7:64; 
+ticks = 172, 1:2; , 2:1; , 3:1; , 4:15; , 5:64; , 6:14; , 7:64; 
+ticks = 173, 1:2; , 2:1; , 3:1; , 4:15; , 5:65; , 6:14; , 7:64; 
+ticks = 174, 1:2; , 2:1; , 3:1; , 4:15; , 5:65; , 6:15; , 7:64; 
+ticks = 175, 1:2; , 2:1; , 3:1; , 4:15; , 5:65; , 6:15; , 7:65; 
+ticks = 176, 1:2; , 2:1; , 3:1; , 4:16; , 5:65; , 6:15; , 7:65; 
+ticks = 177, 1:2; , 2:1; , 3:1; , 4:16; , 5:66; , 6:15; , 7:65; 
+ticks = 178, 1:2; , 2:1; , 3:1; , 4:16; , 5:66; , 6:16; , 7:65; 
+ticks = 179, 1:2; , 2:1; , 3:1; , 4:16; , 5:66; , 6:16; , 7:66; 
+ticks = 180, 1:2; , 2:1; , 3:1; , 4:17; , 5:66; , 6:16; , 7:66; 
+ticks = 181, 1:2; , 2:1; , 3:1; , 4:17; , 5:67; , 6:16; , 7:66; 
+ticks = 182, 1:2; , 2:1; , 3:1; , 4:17; , 5:67; , 6:17; , 7:66; 
+ticks = 183, 1:2; , 2:1; , 3:1; , 4:17; , 5:67; , 6:17; , 7:67; 
+ticks = 184, 1:2; , 2:1; , 3:1; , 4:18; , 5:67; , 6:17; , 7:67; 
+ticks = 185, 1:2; , 2:1; , 3:1; , 4:18; , 5:68; , 6:17; , 7:67; 
+ticks = 186, 1:2; , 2:1; , 3:1; , 4:18; , 5:68; , 6:18; , 7:67; 
+ticks = 187, 1:2; , 2:1; , 3:1; , 4:18; , 5:68; , 6:18; , 7:68; 
+ticks = 188, 1:2; , 2:1; , 3:1; , 4:18; , 5:69; , 6:18; , 7:68; 
+ticks = 189, 1:2; , 2:1; , 3:1; , 4:18; , 5:69; , 6:18; , 7:69; 
+ticks = 190, 1:2; , 2:1; , 3:1; , 4:18; , 5:70; , 6:18; , 7:69; 
+ticks = 191, 1:2; , 2:1; , 3:1; , 4:18; , 5:70; , 6:18; , 7:70; 
+ticks = 192, 1:2; , 2:1; , 3:1; , 4:18; , 5:71; , 6:18; , 7:70; 
+ticks = 193, 1:2; , 2:1; , 3:1; , 4:18; , 5:71; , 6:18; , 7:71; 
+ticks = 194, 1:2; , 2:1; , 3:1; , 4:18; , 5:72; , 6:18; , 7:71; 
+ticks = 195, 1:2; , 2:1; , 3:1; , 4:18; , 5:72; , 6:18; , 7:72; 
+ticks = 196, 1:2; , 2:1; , 3:1; , 4:18; , 5:73; , 6:18; , 7:72; 
+ticks = 197, 1:2; , 2:1; , 3:1; , 4:18; , 5:73; , 6:18; , 7:73; 
+ticks = 198, 1:2; , 2:1; , 3:1; , 4:18; , 5:74; , 6:18; , 7:73; 
+ticks = 199, 1:2; , 2:1; , 3:1; , 4:18; , 5:74; , 6:18; , 7:74; 
+ticks = 200, 1:2; , 2:1; , 3:1; , 4:18; , 5:75; , 6:18; , 7:74; 
+ticks = 201, 1:2; , 2:1; , 3:1; , 4:18; , 5:75; , 6:18; , 7:75; 
+ticks = 202, 1:2; , 2:1; , 3:1; , 4:18; , 5:76; , 6:18; , 7:75; 
+ticks = 203, 1:2; , 2:1; , 3:1; , 4:18; , 5:76; , 6:18; , 7:76; 
+ticks = 204, 1:2; , 2:1; , 3:1; , 4:18; , 5:77; , 6:18; , 7:76; 
+ticks = 205, 1:2; , 2:1; , 3:1; , 4:18; , 5:77; , 6:18; , 7:77; 
+ticks = 206, 1:2; , 2:1; , 3:1; , 4:18; , 5:78; , 6:18; , 7:77; 
+ticks = 207, 1:2; , 2:1; , 3:1; , 4:18; , 5:78; , 6:18; , 7:78; 
+ticks = 208, 1:2; , 2:1; , 3:1; , 4:18; , 5:79; , 6:18; , 7:78; 
+ticks = 209, 1:2; , 2:1; , 3:1; , 4:18; , 5:79; , 6:18; , 7:79; 
+ticks = 210, 1:2; , 2:1; , 3:1; , 4:18; , 5:80; , 6:18; , 7:79; 
+ticks = 211, 1:2; , 2:1; , 3:1; , 4:18; , 5:80; , 6:18; , 7:80; 
+ticks = 212, 1:2; , 2:1; , 3:1; , 4:18; , 5:81; , 6:18; , 7:80; 
+ticks = 213, 1:2; , 2:1; , 3:1; , 4:18; , 5:81; , 6:18; , 7:81; 
+ticks = 214, 1:2; , 2:1; , 3:1; , 4:18; , 5:82; , 6:18; , 7:81; 
+ticks = 215, 1:2; , 2:1; , 3:1; , 4:18; , 5:82; , 6:18; , 7:82; 
+ticks = 216, 1:2; , 2:1; , 3:1; , 4:18; , 5:83; , 6:18; , 7:82; 
+ticks = 217, 1:2; , 2:1; , 3:1; , 4:18; , 5:83; , 6:18; , 7:83; 
+ticks = 218, 1:2; , 2:1; , 3:1; , 4:18; , 5:84; , 6:18; , 7:83; 
+ticks = 219, 1:2; , 2:1; , 3:1; , 4:18; , 5:84; , 6:18; , 7:84; 
+ticks = 220, 1:2; , 2:1; , 3:1; , 4:18; , 5:85; , 6:18; , 7:84; 
+ticks = 221, 1:2; , 2:1; , 3:1; , 4:18; , 5:85; , 6:18; , 7:85; 
+ticks = 222, 1:2; , 2:1; , 3:1; , 4:18; , 5:86; , 6:18; , 7:85; 
+ticks = 223, 1:2; , 2:1; , 3:1; , 4:18; , 5:86; , 6:18; , 7:86; 
+ticks = 224, 1:2; , 2:1; , 3:1; , 4:18; , 5:87; , 6:18; , 7:86; 
+ticks = 225, 1:2; , 2:1; , 3:1; , 4:18; , 5:87; , 6:18; , 7:87; 
+ticks = 226, 1:2; , 2:1; , 3:1; , 4:18; , 5:88; , 6:18; , 7:87; 
+ticks = 227, 1:2; , 2:1; , 3:1; , 4:18; , 5:88; , 6:18; , 7:88; 
+ticks = 228, 1:2; , 2:1; , 3:1; , 4:18; , 5:89; , 6:18; , 7:88; 
+ticks = 229, 1:2; , 2:1; , 3:1; , 4:18; , 5:89; , 6:18; , 7:89; 
+ticks = 230, 1:2; , 2:1; , 3:1; , 4:18; , 5:90; , 6:18; , 7:89; 
+ticks = 231, 1:2; , 2:1; , 3:1; , 4:18; , 5:90; , 6:18; , 7:90; 
+ticks = 232, 1:2; , 2:1; , 3:1; , 4:18; , 5:91; , 6:18; , 7:90; 
+ticks = 233, 1:2; , 2:1; , 3:1; , 4:18; , 5:91; , 6:18; , 7:91; 
+ticks = 234, 1:2; , 2:1; , 3:1; , 4:18; , 5:92; , 6:18; , 7:91; 
+ticks = 235, 1:2; , 2:1; , 3:1; , 4:18; , 5:92; , 6:18; , 7:92; 
+ticks = 236, 1:2; , 2:1; , 3:1; , 4:18; , 5:93; , 6:18; , 7:92; 
+ticks = 237, 1:2; , 2:1; , 3:1; , 4:18; , 5:93; , 6:18; , 7:93; 
+ticks = 238, 1:2; , 2:1; , 3:1; , 4:19; , 5:93; , 6:18; , 7:93; 
+ticks = 239, 1:2; , 2:1; , 3:1; , 4:19; , 5:94; , 6:18; , 7:93; 
+ticks = 240, 1:2; , 2:1; , 3:1; , 4:19; , 5:94; , 6:19; , 7:93; 
+ticks = 241, 1:2; , 2:1; , 3:1; , 4:19; , 5:94; , 6:19; , 7:94; 
+ticks = 242, 1:2; , 2:1; , 3:1; , 4:20; , 5:94; , 6:19; , 7:94; 
+ticks = 243, 1:2; , 2:1; , 3:1; , 4:20; , 5:95; , 6:19; , 7:94; 
+ticks = 244, 1:2; , 2:1; , 3:1; , 4:20; , 5:95; , 6:20; , 7:94; 
+ticks = 245, 1:2; , 2:1; , 3:1; , 4:20; , 5:95; , 6:20; , 7:95; 
+ticks = 246, 1:2; , 2:1; , 3:1; , 4:21; , 5:95; , 6:20; , 7:95; 
+ticks = 247, 1:2; , 2:1; , 3:1; , 4:21; , 5:96; , 6:20; , 7:95; 
+ticks = 248, 1:2; , 2:1; , 3:1; , 4:21; , 5:96; , 6:21; , 7:95; 
+ticks = 249, 1:2; , 2:1; , 3:1; , 4:21; , 5:96; , 6:21; , 7:96; 
+ticks = 250, 1:2; , 2:1; , 3:1; , 4:22; , 5:96; , 6:21; , 7:96; 
+ticks = 251, 1:2; , 2:1; , 3:1; , 4:22; , 5:97; , 6:21; , 7:96; 
+ticks = 252, 1:2; , 2:1; , 3:1; , 4:22; , 5:97; , 6:22; , 7:96; 
+ticks = 253, 1:2; , 2:1; , 3:1; , 4:22; , 5:97; , 6:22; , 7:97; 
+ticks = 254, 1:2; , 2:1; , 3:1; , 4:23; , 5:97; , 6:22; , 7:97; 
+ticks = 255, 1:2; , 2:1; , 3:1; , 4:23; , 5:98; , 6:22; , 7:97; 
+ticks = 256, 1:2; , 2:1; , 3:1; , 4:23; , 5:98; , 6:23; , 7:97; 
+ticks = 257, 1:2; , 2:1; , 3:1; , 4:23; , 5:98; , 6:23; , 7:98; 
+ticks = 258, 1:2; , 2:1; , 3:1; , 4:24; , 5:98; , 6:23; , 7:98; 
+ticks = 259, 1:2; , 2:1; , 3:1; , 4:24; , 5:99; , 6:23; , 7:98; 
+ticks = 260, 1:2; , 2:1; , 3:1; , 4:24; , 5:99; , 6:23; , 7:99; 
+ticks = 261, 1:2; , 2:1; , 3:1; , 4:24; , 5:100; , 6:23; , 7:99; 
+ticks = 262, 1:2; , 2:1; , 3:1; , 4:24; , 5:100; , 6:23; , 7:100; 
+ticks = 263, 1:2; , 2:1; , 3:1; , 4:24; , 5:101; , 6:23; , 7:100; 
+ticks = 264, 1:2; , 2:1; , 3:1; , 4:24; , 5:101; , 6:23; , 7:101; 
+ticks = 265, 1:2; , 2:1; , 3:1; , 4:24; , 5:102; , 6:23; , 7:101; 
+ticks = 266, 1:2; , 2:1; , 3:1; , 4:24; , 5:102; , 6:23; , 7:102; 
+ticks = 267, 1:2; , 2:1; , 3:1; , 4:24; , 5:103; , 6:23; , 7:102; 
+ticks = 268, 1:2; , 2:1; , 3:1; , 4:24; , 5:103; , 6:23; , 7:103; 
+ticks = 269, 1:2; , 2:1; , 3:1; , 4:24; , 5:104; , 6:23; , 7:103; 
+ticks = 270, 1:2; , 2:1; , 3:1; , 4:24; , 5:104; , 6:23; , 7:104; 
+ticks = 271, 1:2; , 2:1; , 3:1; , 4:24; , 5:105; , 6:23; , 7:104; 
+ticks = 272, 1:2; , 2:1; , 3:1; , 4:24; , 5:105; , 6:23; , 7:105; 
+ticks = 273, 1:2; , 2:1; , 3:1; , 4:24; , 5:106; , 6:23; , 7:105; 
+ticks = 274, 1:2; , 2:1; , 3:1; , 4:24; , 5:106; , 6:23; , 7:106; 
+ticks = 275, 1:2; , 2:1; , 3:1; , 4:24; , 5:107; , 6:23; , 7:106; 
+ticks = 276, 1:2; , 2:1; , 3:1; , 4:24; , 5:107; , 6:23; , 7:107; 
+ticks = 277, 1:2; , 2:1; , 3:1; , 4:24; , 5:108; , 6:23; , 7:107; 
+ticks = 278, 1:2; , 2:1; , 3:1; , 4:24; , 5:108; , 6:23; , 7:108; 
+ticks = 279, 1:2; , 2:1; , 3:1; , 4:24; , 5:109; , 6:23; , 7:108; 
+ticks = 280, 1:2; , 2:1; , 3:1; , 4:24; , 5:109; , 6:23; , 7:109; 
+ticks = 281, 1:2; , 2:1; , 3:1; , 4:24; , 5:110; , 6:23; , 7:109; 
+ticks = 282, 1:2; , 2:1; , 3:1; , 4:24; , 5:110; , 6:23; , 7:110; 
+ticks = 283, 1:2; , 2:1; , 3:1; , 4:24; , 5:111; , 6:23; , 7:110; 
+ticks = 284, 1:2; , 2:1; , 3:1; , 4:24; , 5:111; , 6:23; , 7:111; 
+ticks = 285, 1:2; , 2:1; , 3:1; , 4:24; , 5:112; , 6:23; , 7:111; 
+ticks = 286, 1:2; , 2:1; , 3:1; , 4:24; , 5:112; , 6:23; , 7:112; 
+ticks = 287, 1:2; , 2:1; , 3:1; , 4:24; , 5:113; , 6:23; , 7:112; 
+ticks = 288, 1:2; , 2:1; , 3:1; , 4:24; , 5:113; , 6:23; , 7:113; 
+ticks = 289, 1:2; , 2:1; , 3:1; , 4:24; , 5:114; , 6:23; , 7:113; 
+ticks = 290, 1:2; , 2:1; , 3:1; , 4:24; , 5:114; , 6:23; , 7:114; 
+ticks = 291, 1:2; , 2:1; , 3:1; , 4:24; , 5:115; , 6:23; , 7:114; 
+ticks = 292, 1:2; , 2:1; , 3:1; , 4:24; , 5:115; , 6:23; , 7:115; 
+ticks = 293, 1:2; , 2:1; , 3:1; , 4:24; , 5:116; , 6:23; , 7:115; 
+ticks = 294, 1:2; , 2:1; , 3:1; , 4:24; , 5:116; , 6:23; , 7:116; 
+ticks = 295, 1:2; , 2:1; , 3:1; , 4:24; , 5:117; , 6:23; , 7:116; 
+ticks = 296, 1:2; , 2:1; , 3:1; , 4:24; , 5:117; , 6:23; , 7:117; 
+ticks = 297, 1:2; , 2:1; , 3:1; , 4:24; , 5:118; , 6:23; , 7:117; 
+ticks = 298, 1:2; , 2:1; , 3:1; , 4:24; , 5:118; , 6:23; , 7:118; 
+ticks = 299, 1:2; , 2:1; , 3:1; , 4:24; , 5:119; , 6:23; , 7:118; 
+ticks = 300, 1:2; , 2:1; , 3:1; , 4:24; , 5:119; , 6:23; , 7:119; 
+ticks = 301, 1:2; , 2:1; , 3:1; , 4:24; , 5:120; , 6:23; , 7:119; 
+ticks = 302, 1:2; , 2:1; , 3:1; , 4:24; , 5:120; , 6:23; , 7:120; 
+ticks = 303, 1:2; , 2:1; , 3:1; , 4:24; , 5:121; , 6:23; , 7:120; 
+ticks = 304, 1:2; , 2:1; , 3:1; , 4:24; , 5:121; , 6:23; , 7:121; 
+ticks = 305, 1:2; , 2:1; , 3:1; , 4:24; , 5:122; , 6:23; , 7:121; 
+ticks = 306, 1:2; , 2:1; , 3:1; , 4:24; , 5:122; , 6:23; , 7:122; 
+ticks = 307, 1:2; , 2:1; , 3:1; , 4:24; , 5:123; , 6:23; , 7:122; 
+ticks = 308, 1:2; , 2:1; , 3:1; , 4:24; , 5:123; , 6:23; , 7:123; 
+ticks = 309, 1:2; , 2:1; , 3:1; , 4:24; , 5:124; , 6:23; , 7:123; 
+ticks = 310, 1:2; , 2:1; , 3:1; , 4:24; , 5:124; , 6:24; , 7:123; 
+ticks = 311, 1:2; , 2:1; , 3:1; , 4:24; , 5:124; , 6:24; , 7:124; 
+ticks = 312, 1:2; , 2:1; , 3:1; , 4:25; , 5:124; , 6:24; , 7:124; 
+ticks = 313, 1:2; , 2:1; , 3:1; , 4:25; , 5:125; , 6:24; , 7:124; 
+ticks = 314, 1:2; , 2:1; , 3:1; , 4:25; , 5:125; , 6:25; , 7:124; 
+ticks = 315, 1:2; , 2:1; , 3:1; , 4:25; , 5:125; , 6:25; , 7:125; 
+ticks = 316, 1:2; , 2:1; , 3:1; , 4:26; , 5:125; , 6:25; , 7:125; 
+ticks = 317, 1:2; , 2:1; , 3:1; , 4:26; , 5:126; , 6:25; , 7:125; 
+ticks = 318, 1:2; , 2:1; , 3:1; , 4:26; , 5:126; , 6:26; , 7:125; 
+ticks = 319, 1:2; , 2:1; , 3:1; , 4:26; , 5:126; , 6:26; , 7:126; 
+ticks = 320, 1:2; , 2:1; , 3:1; , 4:27; , 5:126; , 6:26; , 7:126; 
+ticks = 321, 1:2; , 2:1; , 3:1; , 4:27; , 5:127; , 6:26; , 7:126; 
+ticks = 322, 1:2; , 2:1; , 3:1; , 4:27; , 5:127; , 6:27; , 7:126; 
+ticks = 323, 1:2; , 2:1; , 3:1; , 4:27; , 5:127; , 6:27; , 7:127; 
+ticks = 324, 1:2; , 2:1; , 3:1; , 4:28; , 5:127; , 6:27; , 7:127; 
+ticks = 325, 1:2; , 2:1; , 3:1; , 4:28; , 5:128; , 6:27; , 7:127; 
+ticks = 326, 1:2; , 2:1; , 3:1; , 4:28; , 5:128; , 6:28; , 7:127; 
+ticks = 327, 1:2; , 2:1; , 3:1; , 4:28; , 5:128; , 6:28; , 7:128; 
+ticks = 328, 1:2; , 2:1; , 3:1; , 4:29; , 5:128; , 6:28; , 7:128; 
+ticks = 329, 1:2; , 2:1; , 3:1; , 4:29; , 5:129; , 6:28; , 7:128; 
+ticks = 330, 1:2; , 2:1; , 3:1; , 4:29; , 5:129; , 6:28; , 7:129; 
+ticks = 331, 1:2; , 2:1; , 3:1; , 4:30; , 5:129; , 6:28; , 7:129; 
+ticks = 332, 1:2; , 2:1; , 3:1; , 4:30; , 5:130; , 6:28; , 7:129; 
+ticks = 333, 1:2; , 2:1; , 3:1; , 4:30; , 5:130; , 6:28; , 7:130; 
+ticks = 334, 1:2; , 2:1; , 3:1; , 4:30; , 5:131; , 6:28; , 7:130; 
+ticks = 335, 1:2; , 2:1; , 3:1; , 4:30; , 5:131; , 6:28; , 7:131; 
+ticks = 336, 1:2; , 2:1; , 3:1; , 4:30; , 5:132; , 6:28; , 7:131; 
+ticks = 337, 1:2; , 2:1; , 3:1; , 4:30; , 5:132; , 6:28; , 7:132; 
+ticks = 338, 1:2; , 2:1; , 3:1; , 4:30; , 5:133; , 6:28; , 7:132; 
+ticks = 339, 1:2; , 2:1; , 3:1; , 4:30; , 5:133; , 6:28; , 7:133; 
+ticks = 340, 1:2; , 2:1; , 3:1; , 4:30; , 5:134; , 6:28; , 7:133; 
+ticks = 341, 1:2; , 2:1; , 3:1; , 4:30; , 5:134; , 6:28; , 7:134; 
+ticks = 342, 1:2; , 2:1; , 3:1; , 4:30; , 5:135; , 6:28; , 7:134; 
+ticks = 343, 1:2; , 2:1; , 3:1; , 4:30; , 5:135; , 6:28; , 7:135; 
+ticks = 344, 1:2; , 2:1; , 3:1; , 4:30; , 5:136; , 6:28; , 7:135; 
+ticks = 345, 1:2; , 2:1; , 3:1; , 4:30; , 5:136; , 6:28; , 7:136; 
+ticks = 346, 1:2; , 2:1; , 3:1; , 4:30; , 5:137; , 6:28; , 7:136; 
+ticks = 347, 1:2; , 2:1; , 3:1; , 4:30; , 5:137; , 6:28; , 7:137; 
+ticks = 348, 1:2; , 2:1; , 3:1; , 4:30; , 5:138; , 6:28; , 7:137; 
+ticks = 349, 1:2; , 2:1; , 3:1; , 4:30; , 5:138; , 6:28; , 7:138; 
+ticks = 350, 1:2; , 2:1; , 3:1; , 4:30; , 5:139; , 6:28; , 7:138; 
+ticks = 351, 1:2; , 2:1; , 3:1; , 4:30; , 5:139; , 6:28; , 7:139; 
+ticks = 352, 1:2; , 2:1; , 3:1; , 4:30; , 5:140; , 6:28; , 7:139; 
+ticks = 353, 1:2; , 2:1; , 3:1; , 4:30; , 5:140; , 6:28; , 7:140; 
+ticks = 354, 1:2; , 2:1; , 3:1; , 4:30; , 5:141; , 6:28; , 7:140; 
+ticks = 355, 1:2; , 2:1; , 3:1; , 4:30; , 5:141; , 6:28; , 7:141; 
+ticks = 356, 1:2; , 2:1; , 3:1; , 4:30; , 5:142; , 6:28; , 7:141; 
+ticks = 357, 1:2; , 2:1; , 3:1; , 4:30; , 5:142; , 6:28; , 7:142; 
+ticks = 358, 1:2; , 2:1; , 3:1; , 4:30; , 5:143; , 6:28; , 7:142; 
+ticks = 359, 1:2; , 2:1; , 3:1; , 4:30; , 5:143; , 6:28; , 7:143; 
+ticks = 360, 1:2; , 2:1; , 3:1; , 4:30; , 5:144; , 6:28; , 7:143; 
+ticks = 361, 1:2; , 2:1; , 3:1; , 4:30; , 5:144; , 6:28; , 7:144; 
+ticks = 362, 1:2; , 2:1; , 3:1; , 4:30; , 5:145; , 6:28; , 7:144; 
+ticks = 363, 1:2; , 2:1; , 3:1; , 4:30; , 5:145; , 6:28; , 7:145; 
+ticks = 364, 1:2; , 2:1; , 3:1; , 4:30; , 5:146; , 6:28; , 7:145; 
+ticks = 365, 1:2; , 2:1; , 3:1; , 4:30; , 5:146; , 6:28; , 7:146; 
+ticks = 366, 1:2; , 2:1; , 3:1; , 4:30; , 5:147; , 6:28; , 7:146; 
+ticks = 367, 1:2; , 2:1; , 3:1; , 4:30; , 5:147; , 6:28; , 7:147; 
+ticks = 368, 1:2; , 2:1; , 3:1; , 4:30; , 5:148; , 6:28; , 7:147; 
+ticks = 369, 1:2; , 2:1; , 3:1; , 4:30; , 5:148; , 6:28; , 7:148; 
+ticks = 370, 1:2; , 2:1; , 3:1; , 4:30; , 5:149; , 6:28; , 7:148; 
+ticks = 371, 1:2; , 2:1; , 3:1; , 4:30; , 5:149; , 6:28; , 7:149; 
+ticks = 372, 1:2; , 2:1; , 3:1; , 4:30; , 5:150; , 6:28; , 7:149; 
+ticks = 373, 1:2; , 2:1; , 3:1; , 4:30; , 5:150; , 6:28; , 7:150; 
+ticks = 374, 1:2; , 2:1; , 3:1; , 4:30; , 5:151; , 6:28; , 7:150; 
+ticks = 375, 1:2; , 2:1; , 3:1; , 4:30; , 5:151; , 6:28; , 7:151; 
+ticks = 376, 1:2; , 2:1; , 3:1; , 4:30; , 5:152; , 6:28; , 7:151; 
+ticks = 377, 1:2; , 2:1; , 3:1; , 4:30; , 5:152; , 6:28; , 7:152; 
+ticks = 378, 1:2; , 2:1; , 3:1; , 4:30; , 5:153; , 6:28; , 7:152; 
+ticks = 379, 1:2; , 2:1; , 3:1; , 4:30; , 5:153; , 6:28; , 7:153; 
+ticks = 380, 1:2; , 2:1; , 3:1; , 4:30; , 5:154; , 6:28; , 7:153; 
+ticks = 381, 1:2; , 2:1; , 3:1; , 4:30; , 5:154; , 6:29; , 7:153; 
+ticks = 382, 1:2; , 2:1; , 3:1; , 4:30; , 5:154; , 6:29; , 7:154; 
+ticks = 383, 1:2; , 2:1; , 3:1; , 4:30; , 5:155; , 6:29; , 7:154; 
+ticks = 384, 1:2; , 2:1; , 3:1; , 4:30; , 5:155; , 6:30; , 7:154; 
+ticks = 385, 1:2; , 2:1; , 3:1; , 4:30; , 5:155; , 6:30; , 7:155; 
+ticks = 386, 1:2; , 2:1; , 3:1; , 4:31; , 5:155; , 6:30; , 7:155; 
+ticks = 387, 1:2; , 2:1; , 3:1; , 4:31; , 5:156; , 6:30; , 7:155; 
+ticks = 388, 1:2; , 2:1; , 3:1; , 4:31; , 5:156; , 6:31; , 7:155; 
+ticks = 389, 1:2; , 2:1; , 3:1; , 4:31; , 5:156; , 6:31; , 7:156; 
+ticks = 390, 1:2; , 2:1; , 3:1; , 4:32; , 5:156; , 6:31; , 7:156; 
+ticks = 391, 1:2; , 2:1; , 3:1; , 4:32; , 5:157; , 6:31; , 7:156; 
+ticks = 392, 1:2; , 2:1; , 3:1; , 4:32; , 5:157; , 6:32; , 7:156; 
+ticks = 393, 1:2; , 2:1; , 3:1; , 4:32; , 5:157; , 6:32; , 7:157; 
+ticks = 394, 1:2; , 2:1; , 3:1; , 4:33; , 5:157; , 6:32; , 7:157; 
+ticks = 395, 1:2; , 2:1; , 3:1; , 4:33; , 5:158; , 6:32; , 7:157; 
+ticks = 396, 1:2; , 2:1; , 3:1; , 4:33; , 5:158; , 6:33; , 7:157; 
+ticks = 397, 1:2; , 2:1; , 3:1; , 4:33; , 5:158; , 6:33; , 7:158; 
+ticks = 398, 1:2; , 2:1; , 3:1; , 4:34; , 5:158; , 6:33; , 7:158; 
+ticks = 399, 1:2; , 2:1; , 3:1; , 4:34; , 5:159; , 6:33; , 7:158; 
+ticks = 400, 1:2; , 2:1; , 3:1; , 4:34; , 5:159; , 6:34; , 7:158; 
+ticks = 401, 1:2; , 2:1; , 3:1; , 4:34; , 5:159; , 6:34; , 7:159; 
+ticks = 402, 1:2; , 2:1; , 3:1; , 4:35; , 5:159; , 6:34; , 7:159; 
+ticks = 403, 1:2; , 2:1; , 3:1; , 4:35; , 5:160; , 6:34; , 7:159; 
+ticks = 404, 1:2; , 2:1; , 3:1; , 4:35; , 5:160; , 6:34; , 7:160; 
+ticks = 405, 1:2; , 2:1; , 3:1; , 4:35; , 5:161; , 6:34; , 7:160; 
+ticks = 406, 1:2; , 2:1; , 3:1; , 4:35; , 5:161; , 6:34; , 7:161; 
+ticks = 407, 1:2; , 2:1; , 3:1; , 4:35; , 5:162; , 6:34; , 7:161; 
+ticks = 408, 1:2; , 2:1; , 3:1; , 4:35; , 5:162; , 6:34; , 7:162; 
+ticks = 409, 1:2; , 2:1; , 3:1; , 4:35; , 5:163; , 6:34; , 7:162; 
+ticks = 410, 1:2; , 2:1; , 3:1; , 4:35; , 5:163; , 6:34; , 7:163; 
+ticks = 411, 1:2; , 2:1; , 3:1; , 4:35; , 5:164; , 6:34; , 7:163; 
+ticks = 412, 1:2; , 2:1; , 3:1; , 4:35; , 5:164; , 6:34; , 7:164; 
+ticks = 413, 1:2; , 2:1; , 3:1; , 4:35; , 5:165; , 6:34; , 7:164; 
+ticks = 414, 1:2; , 2:1; , 3:1; , 4:35; , 5:165; , 6:34; , 7:165; 
+ticks = 415, 1:2; , 2:1; , 3:1; , 4:35; , 5:166; , 6:34; , 7:165; 
+ticks = 416, 1:2; , 2:1; , 3:1; , 4:35; , 5:166; , 6:34; , 7:166; 
+ticks = 417, 1:2; , 2:1; , 3:1; , 4:35; , 5:167; , 6:34; , 7:166; 
+ticks = 418, 1:2; , 2:1; , 3:1; , 4:35; , 5:167; , 6:34; , 7:167; 
+ticks = 419, 1:2; , 2:1; , 3:1; , 4:35; , 5:168; , 6:34; , 7:167; 
+ticks = 420, 1:2; , 2:1; , 3:1; , 4:35; , 5:168; , 6:34; , 7:168; 
+ticks = 421, 1:2; , 2:1; , 3:1; , 4:35; , 5:169; , 6:34; , 7:168; 
+ticks = 422, 1:2; , 2:1; , 3:1; , 4:35; , 5:169; , 6:34; , 7:169; 
+ticks = 423, 1:2; , 2:1; , 3:1; , 4:35; , 5:170; , 6:34; , 7:169; 
+ticks = 424, 1:2; , 2:1; , 3:1; , 4:35; , 5:170; , 6:34; , 7:170; 
+ticks = 425, 1:2; , 2:1; , 3:1; , 4:35; , 5:171; , 6:34; , 7:170; 
+ticks = 426, 1:2; , 2:1; , 3:1; , 4:35; , 5:171; , 6:34; , 7:171; 
+ticks = 427, 1:2; , 2:1; , 3:1; , 4:35; , 5:172; , 6:34; , 7:171; 
+ticks = 428, 1:2; , 2:1; , 3:1; , 4:35; , 5:172; , 6:34; , 7:172; 
+ticks = 429, 1:2; , 2:1; , 3:1; , 4:35; , 5:173; , 6:34; , 7:172; 
+ticks = 430, 1:2; , 2:1; , 3:1; , 4:35; , 5:173; , 6:34; , 7:173; 
+ticks = 431, 1:2; , 2:1; , 3:1; , 4:35; , 5:174; , 6:34; , 7:173; 
+ticks = 432, 1:2; , 2:1; , 3:1; , 4:35; , 5:174; , 6:34; , 7:174; 
+ticks = 433, 1:2; , 2:1; , 3:1; , 4:35; , 5:175; , 6:34; , 7:174; 
+ticks = 434, 1:2; , 2:1; , 3:1; , 4:35; , 5:175; , 6:34; , 7:175; 
+ticks = 435, 1:2; , 2:1; , 3:1; , 4:35; , 5:176; , 6:34; , 7:175; 
+ticks = 436, 1:2; , 2:1; , 3:1; , 4:35; , 5:176; , 6:34; , 7:176; 
+ticks = 437, 1:2; , 2:1; , 3:1; , 4:35; , 5:177; , 6:34; , 7:176; 
+ticks = 438, 1:2; , 2:1; , 3:1; , 4:35; , 5:177; , 6:34; , 7:177; 
+ticks = 439, 1:2; , 2:1; , 3:1; , 4:35; , 5:178; , 6:34; , 7:177; 
+ticks = 440, 1:2; , 2:1; , 3:1; , 4:35; , 5:178; , 6:34; , 7:178; 
+ticks = 441, 1:2; , 2:1; , 3:1; , 4:35; , 5:179; , 6:34; , 7:178; 
+ticks = 442, 1:2; , 2:1; , 3:1; , 4:35; , 5:179; , 6:34; , 7:179; 
+ticks = 443, 1:2; , 2:1; , 3:1; , 4:35; , 5:180; , 6:34; , 7:179; 
+ticks = 444, 1:2; , 2:1; , 3:1; , 4:35; , 5:180; , 6:34; , 7:180; 
+ticks = 445, 1:2; , 2:1; , 3:1; , 4:35; , 5:181; , 6:34; , 7:180; 
+ticks = 446, 1:2; , 2:1; , 3:1; , 4:35; , 5:181; , 6:34; , 7:181; 
+ticks = 447, 1:2; , 2:1; , 3:1; , 4:35; , 5:182; , 6:34; , 7:181; 
+ticks = 448, 1:2; , 2:1; , 3:1; , 4:35; , 5:182; , 6:34; , 7:182; 
+ticks = 449, 1:2; , 2:1; , 3:1; , 4:35; , 5:183; , 6:34; , 7:182; 
+ticks = 450, 1:2; , 2:1; , 3:1; , 4:35; , 5:183; , 6:34; , 7:183; 
+ticks = 451, 1:2; , 2:1; , 3:1; , 4:35; , 5:184; , 6:34; , 7:183; 
+ticks = 452, 1:2; , 2:1; , 3:1; , 4:35; , 5:184; , 6:34; , 7:184; 
+ticks = 453, 1:2; , 2:1; , 3:1; , 4:35; , 5:185; , 6:34; , 7:184; 
+ticks = 454, 1:2; , 2:1; , 3:1; , 4:35; , 5:185; , 6:35; , 7:184; 
+ticks = 455, 1:2; , 2:1; , 3:1; , 4:35; , 5:185; , 6:35; , 7:185; 
+ticks = 456, 1:2; , 2:1; , 3:1; , 4:36; , 5:185; , 6:35; , 7:185; 
+ticks = 457, 1:2; , 2:1; , 3:1; , 4:36; , 5:186; , 6:35; , 7:185; 
+ticks = 458, 1:2; , 2:1; , 3:1; , 4:36; , 5:186; , 6:36; , 7:185; 
+ticks = 459, 1:2; , 2:1; , 3:1; , 4:36; , 5:186; , 6:36; , 7:186; 
+ticks = 460, 1:2; , 2:1; , 3:1; , 4:37; , 5:186; , 6:36; , 7:186; 
+ticks = 461, 1:2; , 2:1; , 3:1; , 4:37; , 5:187; , 6:36; , 7:186; 
+ticks = 462, 1:2; , 2:1; , 3:1; , 4:37; , 5:187; , 6:37; , 7:186; 
+ticks = 463, 1:2; , 2:1; , 3:1; , 4:37; , 5:187; , 6:37; , 7:187; 
+ticks = 464, 1:2; , 2:1; , 3:1; , 4:38; , 5:187; , 6:37; , 7:187; 
+ticks = 465, 1:2; , 2:1; , 3:1; , 4:38; , 5:188; , 6:37; , 7:187; 
+ticks = 466, 1:2; , 2:1; , 3:1; , 4:38; , 5:188; , 6:38; , 7:187; 
+ticks = 467, 1:2; , 2:1; , 3:1; , 4:38; , 5:188; , 6:38; , 7:188; 
+ticks = 468, 1:2; , 2:1; , 3:1; , 4:39; , 5:188; , 6:38; , 7:188; 
+ticks = 469, 1:2; , 2:1; , 3:1; , 4:39; , 5:189; , 6:38; , 7:188; 
+ticks = 470, 1:2; , 2:1; , 3:1; , 4:39; , 5:189; , 6:39; , 7:188; 
+ticks = 471, 1:2; , 2:1; , 3:1; , 4:39; , 5:189; , 6:39; , 7:189; 
+ticks = 472, 1:2; , 2:1; , 3:1; , 4:40; , 5:189; , 6:39; , 7:189; 
+ticks = 473, 1:2; , 2:1; , 3:1; , 4:40; , 5:190; , 6:39; , 7:189; 
+ticks = 474, 1:2; , 2:1; , 3:1; , 4:40; , 5:190; , 6:40; , 7:189; 
+ticks = 475, 1:2; , 2:1; , 3:1; , 4:40; , 5:190; , 6:40; , 7:190; 
+ticks = 476, 1:2; , 2:1; , 3:1; , 4:41; , 5:190; , 6:40; , 7:190; 
+ticks = 477, 1:2; , 2:1; , 3:1; , 4:41; , 5:191; , 6:40; , 7:190; 
+ticks = 478, 1:2; , 2:1; , 3:1; , 4:41; , 5:191; , 6:40; , 7:191; 
+ticks = 479, 1:2; , 2:1; , 3:1; , 4:41; , 5:192; , 6:40; , 7:191; 
+ticks = 480, 1:2; , 2:1; , 3:1; , 4:41; , 5:192; , 6:40; , 7:192; 
+ticks = 481, 1:2; , 2:1; , 3:1; , 4:41; , 5:193; , 6:40; , 7:192; 
+ticks = 482, 1:2; , 2:1; , 3:1; , 4:41; , 5:193; , 6:40; , 7:193; 
+ticks = 483, 1:2; , 2:1; , 3:1; , 4:41; , 5:194; , 6:40; , 7:193; 
+ticks = 484, 1:2; , 2:1; , 3:1; , 4:41; , 5:194; , 6:40; , 7:194; 
+ticks = 485, 1:2; , 2:1; , 3:1; , 4:41; , 5:195; , 6:40; , 7:194; 
+ticks = 486, 1:2; , 2:1; , 3:1; , 4:41; , 5:195; , 6:40; , 7:195; 
+ticks = 487, 1:2; , 2:1; , 3:1; , 4:41; , 5:196; , 6:40; , 7:195; 
+ticks = 488, 1:2; , 2:1; , 3:1; , 4:41; , 5:196; , 6:40; , 7:196; 
+ticks = 489, 1:2; , 2:1; , 3:1; , 4:41; , 5:197; , 6:40; , 7:196; 
+ticks = 490, 1:2; , 2:1; , 3:1; , 4:41; , 5:197; , 6:40; , 7:197; 
+ticks = 491, 1:2; , 2:1; , 3:1; , 4:41; , 5:198; , 6:40; , 7:197; 
+ticks = 492, 1:2; , 2:1; , 3:1; , 4:41; , 5:198; , 6:40; , 7:198; 
+ticks = 493, 1:2; , 2:1; , 3:1; , 4:41; , 5:199; , 6:40; , 7:198; 
+ticks = 494, 1:2; , 2:1; , 3:1; , 4:41; , 5:199; , 6:40; , 7:199; 
+ticks = 495, 1:2; , 2:1; , 3:1; , 4:41; , 5:200; , 6:40; , 7:199; 
+ticks = 496, 1:2; , 2:1; , 3:1; , 4:41; , 5:200; , 6:40; , 7:200; 
+ticks = 497, 1:2; , 2:1; , 3:1; , 4:41; , 5:201; , 6:40; , 7:200; 
+ticks = 498, 1:2; , 2:1; , 3:1; , 4:41; , 5:201; , 6:40; , 7:201; 
+ticks = 499, 1:2; , 2:1; , 3:1; , 4:41; , 5:202; , 6:40; , 7:201; 
+ticks = 500, 1:2; , 2:1; , 3:1; , 4:41; , 5:202; , 6:40; , 7:202; 
+ticks = 501, 1:2; , 2:1; , 3:1; , 4:41; , 5:203; , 6:40; , 7:202; 
+ticks = 502, 1:2; , 2:1; , 3:1; , 4:41; , 5:203; , 6:40; , 7:203; 
+ticks = 503, 1:2; , 2:1; , 3:1; , 4:41; , 5:204; , 6:40; , 7:203; 
+ticks = 504, 1:2; , 2:1; , 3:1; , 4:41; , 5:204; , 6:40; , 7:204; 
+ticks = 505, 1:2; , 2:1; , 3:1; , 4:41; , 5:205; , 6:40; , 7:204; 
+ticks = 506, 1:2; , 2:1; , 3:1; , 4:41; , 5:205; , 6:40; , 7:205; 
+ticks = 507, 1:2; , 2:1; , 3:1; , 4:41; , 5:206; , 6:40; , 7:205; 
+ticks = 508, 1:2; , 2:1; , 3:1; , 4:41; , 5:206; , 6:40; , 7:206; 
+ticks = 509, 1:2; , 2:1; , 3:1; , 4:41; , 5:207; , 6:40; , 7:206; 
+ticks = 510, 1:2; , 2:1; , 3:1; , 4:41; , 5:207; , 6:40; , 7:207; 
+ticks = 511, 1:2; , 2:1; , 3:1; , 4:41; , 5:208; , 6:40; , 7:207; 
+ticks = 512, 1:2; , 2:1; , 3:1; , 4:41; , 5:208; , 6:40; , 7:208; 
+ticks = 513, 1:2; , 2:1; , 3:1; , 4:41; , 5:209; , 6:40; , 7:208; 
+ticks = 514, 1:2; , 2:1; , 3:1; , 4:41; , 5:209; , 6:40; , 7:209; 
+ticks = 515, 1:2; , 2:1; , 3:1; , 4:41; , 5:210; , 6:40; , 7:209; 
+ticks = 516, 1:2; , 2:1; , 3:1; , 4:41; , 5:210; , 6:40; , 7:210; 
+
+**** PInfo ****
+pid: 1 ticks: 2 priority: 0
+pid: 2 ticks: 1 priority: 0
+pid: 3 ticks: 1 priority: 0
+pticks = 517, 1:2; , 2:1; , 3:2; , 4:41; , 5:210; , 6:40; , 7:210; 
+ticks = 518, 1:2; , 2:1; , 3:2; , 4:41; , 5:211; , 6:40; , 7:210; 
+ticks = 519, 1:2; , 2:1; , 3:2; , 4:41; , 5:211; , 6:40; , 7:211; 
+id: 4 ticks: 41 priority: 3
+pid: 5 ticks: 210 priority: 20
+pid: 6 ticks: 40 priority: 3
+pid: 7 ticks: 210 priority:ticks = 520, 1:2; , 2:1; , 3:3; , 4:41; , 5:211; , 6:40; , 7:211; 
+ticks = 521, 1:2; , 2:1; , 3:3; , 4:41; , 5:212; , 6:40; , 7:211; 
+ticks = 522, 1:2; , 2:1; , 3:3; , 4:41; , 5:212; , 6:40; , 7:212; 
+ 20
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+ticks = 523, 1:2; , 2:1; , 3:4; , 4:41; , 5:212; , 6:40; , 7:212; 
+ticks = 524, 1:2; , 2:1; , 3:4; , 4:41; , 5:213; , 6:40; , 7:212; 
+ticks = 525, 1:2; , 2:1; , 3:4; , 4:41; , 5:213; , 6:40; , 7:213; 
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticticks = 526, 1:2; , 2:1; , 3:5; , 4:41; , 5:213; , 6:40; , 7:213; 
+ticks = 527, 1:2; , 2:1; , 3:5; , 4:41; , 5:214; , 6:40; , 7:213; 
+ticks = 528, 1:2; , 2:1; , 3:5; , 4:41; , 5:214; , 6:41; , 7:213; 
+ticks = 529, 1:2; , 2:1; , 3:5; , 4:41; , 5:214; , 6:41; , 7:214; 
+ks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priorticks = 530, 1:2; , 2:1; , 3:6; , 4:41; , 5:214; , 6:41; , 7:214; 
+ticks = 531, 1:2; , 2:1; , 3:6; , 4:42; , 5:214; , 6:41; , 7:214; 
+ticks = 532, 1:2; , 2:1; , 3:6; , 4:42; , 5:215; , 6:41; , 7:214; 
+ticks = 533, 1:2; , 2:1; , 3:6; , 4:42; , 5:215; , 6:42; , 7:214; 
+ticks = 534, 1:2; , 2:1; , 3:6; , 4:42; , 5:215; , 6:42; , 7:215; 
+ity: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+ticks = 535, 1:2; , 2:1; , 3:7; , 4:42; , 5:215; , 6:42; , 7:215; 
+ticks = 536, 1:2; , 2:1; , 3:7; , 4:43; , 5:215; , 6:42; , 7:215; 
+ticks = 537, 1:2; , 2:1; , 3:7; , 4:43; , 5:216; , 6:42; , 7:215; 
+ticks = 538, 1:2; , 2:1; , 3:7; , 4:43; , 5:216; , 6:43; , 7:215; 
+ticks = 539, 1:2; , 2:1; , 3:7; , 4:43; , 5:216; , 6:43; , 7:216; 
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticticks = 540, 1:2; , 2:1; , 3:8; , 4:43; , 5:216; , 6:43; , 7:216; 
+ticks = 541, 1:2; , 2:1; , 3:8; , 4:44; , 5:216; , 6:43; , 7:216; 
+ticks = 542, 1:2; , 2:1; , 3:8; , 4:44; , 5:217; , 6:43; , 7:216; 
+ticks = 543, 1:2; , 2:1; , 3:8; , 4:44; , 5:217; , 6:44; , 7:216; 
+ticks = 544, 1:2; , 2:1; , 3:8; , 4:44; , 5:217; , 6:44; , 7:217; 
+ks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 prioriticks = 545, 1:2; , 2:1; , 3:9; , 4:44; , 5:217; , 6:44; , 7:217; 
+ticks = 546, 1:2; , 2:1; , 3:9; , 4:45; , 5:217; , 6:44; , 7:217; 
+ticks = 547, 1:2; , 2:1; , 3:9; , 4:45; , 5:218; , 6:44; , 7:217; 
+ticks = 548, 1:2; , 2:1; , 3:9; , 4:45; , 5:218; , 6:45; , 7:217; 
+ticks = 549, 1:2; , 2:1; , 3:9; , 4:45; , 5:218; , 6:45; , 7:218; 
+ty: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+ticks = 550, 1:2; , 2:1; , 3:10; , 4:45; , 5:218; , 6:45; , 7:218; 
+ticks = 551, 1:2; , 2:1; , 3:10; , 4:46; , 5:218; , 6:45; , 7:218; 
+ticks = 552, 1:2; , 2:1; , 3:10; , 4:46; , 5:219; , 6:45; , 7:218; 
+ticks = 553, 1:2; , 2:1; , 3:10; , 4:46; , 5:219; , 6:45; , 7:219; 
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priorityticks = 554, 1:2; , 2:1; , 3:11; , 4:46; , 5:219; , 6:45; , 7:219; 
+ticks = 555, 1:2; , 2:1; , 3:11; , 4:47; , 5:219; , 6:45; , 7:219; 
+ticks = 556, 1:2; , 2:1; , 3:11; , 4:47; , 5:220; , 6:45; , 7:219; 
+ticks = 557, 1:2; , 2:1; , 3:11; , 4:47; , 5:220; , 6:45; , 7:220; 
+: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+ticks = 558, 1:2; , 2:1; , 3:12; , 4:47; , 5:220; , 6:45; , 7:220; 
+ticks = 559, 1:2; , 2:1; , 3:12; , 4:47; , 5:221; , 6:45; , 7:220; 
+ticks = 560, 1:2; , 2:1; , 3:12; , 4:47; , 5:221; , 6:45; , 7:221; 
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 tticks = 561, 1:2; , 2:1; , 3:13; , 4:47; , 5:221; , 6:45; , 7:221; 
+ticks = 562, 1:2; , 2:1; , 3:13; , 4:47; , 5:222; , 6:45; , 7:221; 
+ticks = 563, 1:2; , 2:1; , 3:13; , 4:47; , 5:222; , 6:45; , 7:222; 
+icks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 ticks = 564, 1:2; , 2:1; , 3:14; , 4:47; , 5:222; , 6:45; , 7:222; 
+ticks = 565, 1:2; , 2:1; , 3:14; , 4:47; , 5:223; , 6:45; , 7:222; 
+ticks = 566, 1:2; , 2:1; , 3:14; , 4:47; , 5:223; , 6:45; , 7:223; 
+priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priorityticks = 567, 1:2; , 2:1; , 3:15; , 4:47; , 5:223; , 6:45; , 7:223; 
+ticks = 568, 1:2; , 2:1; , 3:15; , 4:47; , 5:224; , 6:45; , 7:223; 
+ticks = 569, 1:2; , 2:1; , 3:15; , 4:47; , 5:224; , 6:45; , 7:224; 
+: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority:ticks = 570, 1:2; , 2:1; , 3:16; , 4:47; , 5:224; , 6:45; , 7:224; 
+ticks = 571, 1:2; , 2:1; , 3:16; , 4:47; , 5:225; , 6:45; , 7:224; 
+ticks = 572, 1:2; , 2:1; , 3:16; , 4:47; , 5:225; , 6:45; , 7:225; 
+ 0
+pid: 0 ticks: 0 priority: 0
+pid: 0 ticks: 0 priority: 0
+Number of processes in useticks = 573, 1:2; , 2:1; , 3:17; 
+ 64
+XV6_SCHEDULER	 FAILED
+
+test test_13 FAILED (0 of 1)
+ (Three process workload for scheduler graph)
+ tester failed
+
+Skipped 0 tests.
+To keep testing after failing a test, use flag '-c' or '--continue'

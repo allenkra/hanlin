@@ -625,10 +625,10 @@ void cpuupdate() {
 
 void plogprint(int ticks) {
   int i;
-  cprintf("ticks = %d \n", ticks);
+  cprintf("ticks = %d", ticks);
       for (i = 0; i < NPROC ; i++) {
         if ( ptable.proc[i].state != UNUSED) {
-          cprintf("p_pid = %d, p->ticks = %d; ", ptable.proc[i].pid, ptable.proc[i].ticks);
+          cprintf(", %d:%d; ", ptable.proc[i].pid, ptable.proc[i].ticks);
         }
       }
   cprintf("\n");
