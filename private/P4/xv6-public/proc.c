@@ -358,7 +358,6 @@ scheduler(void) {
       }
     }
 
-    // 如果找到了要运行的进程
     if(selectedProc) {
       // Switch to chosen process.
       c->proc = selectedProc;
@@ -372,7 +371,6 @@ scheduler(void) {
       // It should have changed its p->state before coming back.
       c->proc = 0;
 
-      lastPicked = selectedProc;  // 更新上次被挑选的进程
     }
 
     release(&ptable.lock);
