@@ -16,6 +16,7 @@ TODO
 - lazy allocation
 - trap.c to implement pagefault handler
 - follow the hints on write-up
+- not FIXED, possible solution : first or next
 
 Implementation
 Files I modified:
