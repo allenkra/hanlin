@@ -1,0 +1,32 @@
+Personal Information:
+Name: Hanlin Wang
+CS Login: hanlin
+Wisc ID: 9086237956
+Wisc Netid: hwang2377
+Email: hwang2377@wisc.edu
+
+
+TODO
+- mmap.h DONE
+- system call mmap
+- mmap: 5 flags indicate 5 modes. Only when MAP_FIXED is set, we care about pointer *addr
+- system call munmap
+- modify fork() to copy the mappings from the parent process to the child
+- modyfy exit() so it removes all the mappings from current process address space
+- lazy allocation
+- trap.c to implement pagefault handler
+- follow the hints on write-up
+
+Implementation
+Files I modified:
+getlastcat.c : usermode syscall
+defs.h : global variable annonce
+syscall.h : add item for getlastcat
+sysfile.c : set detection for "open" in sys_open, when correct, save the filename to buffer, when fail, save fail output to buffer
+sysproc.c : sys_getlastcat function implementation
+syscall.c : add item for getlastcat
+exec.c : set detection for no arguments
+main.c : global buffer initialed to status --not yet been called
+user.h : add item for getlastcat
+usys.S : add item for getlastcat
+Makefile : add item for getlastcat
