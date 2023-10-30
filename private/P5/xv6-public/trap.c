@@ -77,6 +77,8 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
+  case T_PGFLT:
+    cprintf("\tPagefault at virtual addr %x\n", rcr2());
 
   //PAGEBREAK: 13
   default:
