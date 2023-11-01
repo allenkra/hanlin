@@ -130,7 +130,7 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_mmap]    sys_mmap,
-[SYS_munmap]  sys_mmap,
+[SYS_munmap]  sys_munmap,
 };
 
 void

@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "mmap.h"
 
 struct {
   struct spinlock lock;
@@ -531,4 +532,52 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+
+
+
+void *mmap(void *addr, int length, int prot, int flags, int fd, int offset){
+
+  void* addrfound = (void*)-1;
+  if (flags & MAP_FIXED) {
+    // MAP_FIXED
+    // address fault
+    if ((int)addr > KERNBASE || (int)addr < MMAPBASE){
+      return (void*)-1;
+    }
+  }
+
+  if(!is_region_free(myproc()->pgdir, addr, length)) {
+    // Check if the address range [addr, addr+length) is free
+    return (void*)-1;
+  }
+
+  if (flags & MAP_ANON) {
+    // MAP_ANON
+    // Map the pages
+    addrfound = map_pages(myproc()->pgdir, addr, length, PTE_W | PTE_U);
+    if(addrfound <= 0) {
+      return (void*)-1;
+    }
+  }
+
+  if (flags & MAP_PRIVATE) {
+    // MAP_PRIVATE
+    
+  }
+
+  if (flags & MAP_SHARED) {
+    // MAP_SHARED
+    
+  }
+
+  if (flags & MAP_GROWSUP) {
+    // MAP_GRWOSUP
+    
+  }
+
+
+
+  return addrfound;
 }

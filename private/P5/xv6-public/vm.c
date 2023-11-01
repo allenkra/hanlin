@@ -392,3 +392,48 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 //PAGEBREAK!
 // Blank page.
 
+
+void* map_pages(pde_t *pgdir, void *va, uint size, int perm) {
+  char *a, *last;
+  uint pa;
+
+  a = (char*)PGROUNDDOWN((uint)va);
+  last = (char*)PGROUNDUP(((uint)va) + size);
+
+  for (; a < last; a += PGSIZE) {
+    if ((pa = (uint)kalloc()) == 0) {
+      deallocuvm(pgdir, (uint)va + size, (uint)va);
+      return 0;  // Failed to allocate physical memory
+    }
+
+    memset((void*)pa, 0, PGSIZE);  // Zero out the physical memory
+
+    // Now use mappages to map the page
+    if (mappages(pgdir, a, PGSIZE, V2P(pa), perm) < 0) {
+      deallocuvm(pgdir, (uint)va + size, (uint)va);
+      kfree((char*)P2V(pa));  // Free the allocated physical memory
+      return 0;  // Failed to map the page
+    }
+  }
+  // target remote localhost:25394
+  return va;  // Success
+}
+
+
+
+int is_region_free(pde_t *pgdir, void *va, uint size) {
+  char *a, *last;
+  pte_t *pte;
+
+  a = (char*)PGROUNDDOWN((uint)va);
+  last = (char*)PGROUNDUP(((uint)va) + size);
+
+  for (; a < last; a += PGSIZE) {
+    if ((pte = walkpgdir(pgdir, a, 0)) == 0)
+      continue;  // Page table entry does not exist, consider as free
+
+    if (*pte & PTE_P)
+      return 0;  // Page is present, region is not free
+  }
+  return 1;  // Region is free
+}
