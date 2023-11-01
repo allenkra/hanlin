@@ -77,8 +77,13 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
+
+    // Page fault
   case T_PGFLT:
     cprintf("\tPagefault at virtual addr %x\n", rcr2());
+    // check permission
+    // segmentation fault
+    // grow page
 
   //PAGEBREAK: 13
   default:

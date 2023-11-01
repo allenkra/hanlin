@@ -89,3 +89,15 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int sys_mmap(void) {
+  // todo
+  // 1. ANON | FIXED | SHARED
+  return 0;
+}
+
+int sys_munmap(void) {
+  // todo
+  // 1. free memory 
+  return 0;
+}
