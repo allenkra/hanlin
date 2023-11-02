@@ -117,10 +117,15 @@ void* sys_mmap(void) {
   addrmap = (void *)mmap((void*)addr, length, prot, flags, fd, offset);
   if(addrmap == (void*)-1)
     return (void*)-1;
-  myproc()->maparray[0].addr = addrmap;
-  myproc()->maparray[0].flag = flags;
-  myproc()->maparray[0].len = length;
-  myproc()->maparray[0].prot = prot;
+  int i = 0;
+  struct proc* current = myproc();
+  while(current->maparray[i].len != 0) {
+    i++;
+  }
+  current->maparray[i].addr = addrmap;
+  current->maparray[i].flag = flags;
+  current->maparray[i].len = length;
+  current->maparray[i].prot = prot;
 
   // implementation in proc.c
   return addrmap;
@@ -130,11 +135,8 @@ int sys_munmap(void) {
   int addr;
   int length;
 
-  // temp solution, only use array[0]
-  myproc()->maparray[0].addr = (void*)0;
-  myproc()->maparray[0].flag = 0;
-  myproc()->maparray[0].len = 0;
-  myproc()->maparray[0].prot = 0;
+  struct proc* current = myproc();
+
 
   // extract args
   if(argint(0, &addr) < 0)
@@ -146,8 +148,18 @@ int sys_munmap(void) {
   length = PGROUNDUP(length);
 
   // Unmap pages and free memory
-  if(deallocuvm(myproc()->pgdir, (uint)addr + length, (uint)addr) == 0){
+  if(deallocuvm(current->pgdir, (uint)addr + length, (uint)addr) == 0){
     return -1;
+  }
+
+  for(int i = 0; i<= 31; i++) {
+    if (current->maparray[i].addr == (void*) addr) {
+      current->maparray[i].addr = 0;
+      current->maparray[i].flag = 0;
+      current->maparray[i].prot = 0;
+      current->maparray[i].len = 0;
+
+    }
   }
 
   return 0;

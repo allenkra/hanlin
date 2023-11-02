@@ -556,7 +556,13 @@ void *mmap(void *addr, int length, int prot, int flags, int fd, int offset){
   if (flags & MAP_ANON) {
     // MAP_ANON
     // Map the pages
-    addrfound = map_pages(myproc()->pgdir, addr, length, PTE_W | PTE_U);
+    if (flags & MAP_FIXED) {
+      // use addr
+      addrfound = map_pages(myproc()->pgdir, addr, length, PTE_W | PTE_U);
+    } else {
+      // dont use addr, find a free place
+
+    }
     if(addrfound <= 0) {
       return (void*)-1;
     }

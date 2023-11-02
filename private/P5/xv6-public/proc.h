@@ -59,7 +59,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  struct mapping maparray[10]; // info of mapping
+  struct mapping maparray[32]; // info of mapping
 };
 
 // Process memory is laid out contiguously, low addresses first:
