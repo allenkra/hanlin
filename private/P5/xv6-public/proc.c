@@ -576,6 +576,38 @@ void *mmap(void *addr, int length, int prot, int flags, int fd, int offset){
     }
 
   }
+  else {
+    // file-backed mapping
+    if (fd < 0 || fd >= NOFILE || !myproc()->ofile[fd]) {
+        return (void *)-1;  // invalid fd
+    }
+    
+    struct file *f = myproc()->ofile[fd];
+    if (!f) return (void*)-1; // Invalid file descriptor
+
+    if (flags & MAP_FIXED) {
+      // use addr
+      addrfound = map_pages(myproc()->pgdir, addr, length, PTE_W | PTE_U);
+    } 
+    else {
+      // dont use addr, find a free place
+      void* addrtemp = find_free_region(myproc()->pgdir, length);
+      if (addrtemp == 0) {
+        // fail to find free memory
+        return (void*) -1;
+      }
+      addrfound = map_pages(myproc()->pgdir, addrtemp, length, PTE_W | PTE_U);
+      
+    }
+
+    if(addrfound <= 0) {
+      return (void*)-1;
+    } 
+
+    char buffer[length];
+    fileread(f, buffer, length);
+    memmove(addrfound, buffer, length);
+  }
 
   if (flags & MAP_PRIVATE) {
     // MAP_PRIVATE
