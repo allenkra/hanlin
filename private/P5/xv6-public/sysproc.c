@@ -126,6 +126,7 @@ void* sys_mmap(void) {
   current->maparray[i].flag = flags;
   current->maparray[i].len = length;
   current->maparray[i].prot = prot;
+  current->maparray[i].fd = fd;
 
   // implementation in proc.c
   return addrmap;
@@ -134,6 +135,7 @@ void* sys_mmap(void) {
 int sys_munmap(void) {
   int addr;
   int length;
+  int i;
 
   struct proc* current = myproc();
 
@@ -144,21 +146,45 @@ int sys_munmap(void) {
   if(argint(1, &length) < 0)
     return -1;
 
-
   length = PGROUNDUP(length);
+
+  for(i = 0; i <= 31; i++) {
+    if(current->maparray[i].addr == (void*) addr) {
+      break;
+    }
+  }
+
+  if (current->maparray[i].flag & MAP_SHARED && (!(current->maparray[i].flag & MAP_ANON)) ) {
+  // get struct file from maparray
+    int fd = current->maparray[i].fd;
+    cprintf(" fd = %d\n",fd);
+    struct file *f = myproc()->ofile[fd];
+    setfileoff(f, 0);
+    
+    char buffer[length];
+    memmove(buffer, current->maparray[i].addr, length);
+    cprintf("666\n");
+    filewrite(f, buffer, current->maparray[i].len);
+
+    // char buffer1[length];
+    // fileread(f, buffer1, length);
+    // cprintf("123%s\n",buffer1);
+
+    //target remote localhost:25394
+  }
 
   // Unmap pages and free memory
   if(deallocuvm(current->pgdir, (uint)addr + length, (uint)addr) == 0){
     return -1;
   }
 
-  for(int i = 0; i<= 31; i++) {
+  for(i = 0; i<= 31; i++) {
     if (current->maparray[i].addr == (void*) addr) {
       current->maparray[i].addr = 0;
       current->maparray[i].flag = 0;
       current->maparray[i].prot = 0;
       current->maparray[i].len = 0;
-
+      current->maparray[i].fd = 0;
     }
   }
 

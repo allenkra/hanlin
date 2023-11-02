@@ -17,6 +17,7 @@ struct mapping
   int flag;
   int prot;
   int refcount; // update in pagetable, check each process if they access this physical memory
+  int fd;
 };
 
 

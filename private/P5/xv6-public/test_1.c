@@ -17,6 +17,7 @@ int main() {
     char *filename = "test_file.txt";
     int len = 100;
     char buff[len];
+    char new_buff[len];
     int prot = PROT_READ | PROT_WRITE;
     int flags = MAP_SHARED;
 
@@ -29,37 +30,55 @@ int main() {
 
     /* Write some data to the file */
     for (int i = 0; i < len; i++) {
-        buff[i] = (char)(i % 256);
+        buff[i] = 'x'; 
     }
     if (write(fd, buff, len) != len) {
         printf(1, "Error: Write to file FAILED\n");
 	goto failed;
     }
-    close(fd);
 
-    fd = open(filename, O_CREATE | O_RDWR);
-    
-    /* Memory map the file */
+    /* mmap the file */
     void *mem = mmap(0, len, prot, flags, fd, 0);
     if (mem == (void *)-1) {
         printf(1, "mmap FAILED\n");
 	goto failed;
     }
 
-    /* Verify the data in mmaped memory is the same as what was written */
+    /* modify in-memory contents of the mmapped region */
     char *mem_buff = (char *)mem;
-    if (my_strcmp(mem_buff, buff, len) != 0) {
-        printf(1, "Couldn't read the same data back!\n");
-	goto failed;
+    for (int i = 0; i < len; i++) {
+        mem_buff[i] = 'a';     
+        buff[i] = mem_buff[i]; // Later used for validating the data returned by read()
     }
 
-    /* Clean and return */
     int ret = munmap(mem, len);
     if (ret < 0) {
         printf(1, "munmap FAILED\n");
 	goto failed;
     }
 
+    close(fd);
+
+    /* Reopen the file */
+    fd = open(filename, O_RDWR);
+    if (fd < 0) {
+        printf(1, "Error reopening file\n");
+	goto failed;
+    }
+
+    /* Verify that modifications made to mmapped memory have been reflected in the file */
+    if (read(fd, new_buff, len) != len) {
+        printf(1, "Read from file FAILED\n");
+	goto failed;
+    }
+    if (my_strcmp(new_buff, buff, len) != 0) {
+        printf(1, "Writes to mmaped memory not reflected in file\n");
+        printf(1, "\tExpected: %s\n", buff);
+        printf(1, "\tGot: %s\n", new_buff);
+	goto failed;
+    }
+
+    /* Clean and return */
     close(fd);
 
 // success:
