@@ -188,6 +188,7 @@ int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
 void* map_pages(pde_t *pgdir, void *va, uint size, int perm);
 int is_region_free(pde_t *pgdir, void *va, uint size);
+void* find_free_region(pde_t *pgdir, uint size);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

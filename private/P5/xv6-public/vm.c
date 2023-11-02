@@ -437,3 +437,15 @@ int is_region_free(pde_t *pgdir, void *va, uint size) {
   }
   return 1;  // Region is free
 }
+
+void* find_free_region(pde_t *pgdir, uint size) {
+  uint a;
+
+  for (a = MMAPBASE; a + size < KERNBASE; a += PGSIZE) {
+    if (is_region_free(pgdir, (void *)a, size)) {
+      return (void *)a;
+    }
+  }
+  return 0;
+}
+

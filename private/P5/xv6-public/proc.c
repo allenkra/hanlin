@@ -546,12 +546,12 @@ void *mmap(void *addr, int length, int prot, int flags, int fd, int offset){
     if ((int)addr > KERNBASE || (int)addr < MMAPBASE){
       return (void*)-1;
     }
+    if(!is_region_free(myproc()->pgdir, addr, length)) {
+      // Check if the address range [addr, addr+length) is free
+      return (void*)-1;
+    }
   }
 
-  if(!is_region_free(myproc()->pgdir, addr, length)) {
-    // Check if the address range [addr, addr+length) is free
-    return (void*)-1;
-  }
 
   if (flags & MAP_ANON) {
     // MAP_ANON
@@ -559,13 +559,22 @@ void *mmap(void *addr, int length, int prot, int flags, int fd, int offset){
     if (flags & MAP_FIXED) {
       // use addr
       addrfound = map_pages(myproc()->pgdir, addr, length, PTE_W | PTE_U);
-    } else {
+    } 
+    else {
       // dont use addr, find a free place
-
+      void* addrtemp = find_free_region(myproc()->pgdir, length);
+      if (addrtemp == 0) {
+        // fail to find free memory
+        return (void*) -1;
+      }
+      addrfound = map_pages(myproc()->pgdir, addrtemp, length, PTE_W | PTE_U);
+      
     }
+
     if(addrfound <= 0) {
       return (void*)-1;
     }
+
   }
 
   if (flags & MAP_PRIVATE) {
