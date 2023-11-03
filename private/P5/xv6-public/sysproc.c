@@ -157,18 +157,12 @@ int sys_munmap(void) {
   if (current->maparray[i].flag & MAP_SHARED && (!(current->maparray[i].flag & MAP_ANON)) ) {
   // get struct file from maparray
     int fd = current->maparray[i].fd;
-    cprintf(" fd = %d\n",fd);
     struct file *f = myproc()->ofile[fd];
     setfileoff(f, 0);
     
     char buffer[length];
     memmove(buffer, current->maparray[i].addr, length);
-    cprintf("666\n");
     filewrite(f, buffer, current->maparray[i].len);
-
-    // char buffer1[length];
-    // fileread(f, buffer1, length);
-    // cprintf("123%s\n",buffer1);
 
     //target remote localhost:25394
   }

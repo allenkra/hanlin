@@ -200,6 +200,11 @@ fork(void)
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
+  
+// Copy the memory mappings.
+  for(i = 0; i < 32; i++) {
+    np->maparray[i] = curproc->maparray[i];
+  }
 
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
