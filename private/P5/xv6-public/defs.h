@@ -121,6 +121,7 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+int kmunmap(int addr, int length);
 void*           mmap(void *addr, int length, int prot, int flags, int fd, int offset);
 
 // swtch.S
@@ -190,6 +191,7 @@ void            clearpteu(pde_t *pgdir, char *uva);
 void* map_pages(pde_t *pgdir, void *va, uint size, int perm);
 int is_region_free(pde_t *pgdir, void *va, uint size);
 void* find_free_region(pde_t *pgdir, uint size);
+int copyrange(pde_t *pgdir_src, pde_t *pgdir_dst, uint start, uint end);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

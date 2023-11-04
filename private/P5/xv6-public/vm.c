@@ -449,3 +449,25 @@ void* find_free_region(pde_t *pgdir, uint size) {
   return 0;
 }
 
+int copyrange(pde_t *pgdir_src, pde_t *pgdir_dst, uint start, uint end)
+{
+  pte_t *pte_src;
+  uint pa, i, flags;
+  char *mem;
+  
+  for(i = start; i < end; i += PGSIZE){
+      pte_src = walkpgdir(pgdir_src, (void *) i, 0);
+      if(pte_src && (*pte_src & PTE_P)) {
+          pa = PTE_ADDR(*pte_src);
+          flags = PTE_FLAGS(*pte_src);
+          if((mem = kalloc()) == 0)
+              return -1; // fail
+          memmove(mem, (char*)P2V(pa), PGSIZE);
+          if(mappages(pgdir_dst, (void*)i, PGSIZE, V2P(mem), flags) < 0){
+              kfree(mem);
+              return -1;
+          }
+      }
+  }
+  return 0;
+}

@@ -197,6 +197,14 @@ fork(void)
     np->state = UNUSED;
     return -1;
   }
+    // Copy the specific memory range from MMAPBASE to KERNBASE
+  if((copyrange(curproc->pgdir, np->pgdir, MMAPBASE, KERNBASE)) == -1){
+      freevm(np->pgdir);
+      kfree(np->kstack);
+      np->kstack = 0;
+      np->state = UNUSED;
+      return -1;
+  }
   np->sz = curproc->sz;
   np->parent = curproc;
   *np->tf = *curproc->tf;
@@ -205,7 +213,7 @@ fork(void)
   for(i = 0; i < 32; i++) {
     np->maparray[i] = curproc->maparray[i];
   }
-
+  
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -239,7 +247,16 @@ exit(void)
 
   if(curproc == initproc)
     panic("init exiting");
+  
+  // remove mapping by kmunmap
+  for (int i = 0; i < 32; i++) {
+    if ( curproc->maparray[i].addr != (void*) 0) {
+      if (kmunmap((int)curproc->maparray[i].addr, curproc->maparray[i].len) == -1){
+        panic("exit munmap");
+      }
+    }
 
+  }
   // Close all open files.
   for(fd = 0; fd < NOFILE; fd++){
     if(curproc->ofile[fd]){
@@ -632,4 +649,48 @@ void *mmap(void *addr, int length, int prot, int flags, int fd, int offset){
 
 
   return addrfound;
+}
+
+int kmunmap(int addr, int length) {
+  int i;
+  struct proc* current = myproc();
+
+  length = PGROUNDUP(length);
+
+  for(i = 0; i <= 31; i++) {
+    if(current->maparray[i].addr == (void*) addr) {
+      break;
+    }
+  }
+
+  if (current->maparray[i].flag & MAP_SHARED && (!(current->maparray[i].flag & MAP_ANON)) ) {
+  // shared, should write back
+  // get struct file from maparray
+    int fd = current->maparray[i].fd;
+    struct file *f = myproc()->ofile[fd];
+    setfileoff(f, 0);
+    
+    char buffer[length];
+    memmove(buffer, current->maparray[i].addr, length);
+    filewrite(f, buffer, current->maparray[i].len);
+
+    //target remote localhost:25394
+  }
+
+  // Unmap pages and free memory
+  if(deallocuvm(current->pgdir, (uint)addr + length, (uint)addr) == 0){
+    return -1;
+  }
+
+  for(i = 0; i<= 31; i++) {
+    if (current->maparray[i].addr == (void*) addr) {
+      current->maparray[i].addr = 0;
+      current->maparray[i].flag = 0;
+      current->maparray[i].prot = 0;
+      current->maparray[i].len = 0;
+      current->maparray[i].fd = 0;
+    }
+  }
+
+  return 0;
 }

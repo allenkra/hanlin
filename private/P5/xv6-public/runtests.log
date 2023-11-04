@@ -8,7 +8,7 @@ build xv6 using make
 **********************************************************************
 Trying to build project using make
 make xv6.img fs.img
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie -fno-pic -O -nostdinc -I. -c bootmain.c
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie -fno-pic -nostdinc -I. -c bootasm.S
 ld -m    elf_i386 -N -e start -Ttext 0x7C00 -o bootblock.o bootasm.o bootmain.o
@@ -60,15 +60,15 @@ objdump -t kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > kernel.sym
 dd if=/dev/zero of=xv6.img count=10000
 10000+0 records in
 10000+0 records out
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.0395856 s, 129 MB/s
+5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.0095655 s, 535 MB/s
 dd if=bootblock of=xv6.img conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes copied, 0.000315526 s, 1.6 MB/s
+512 bytes copied, 8.136e-05 s, 6.3 MB/s
 dd if=kernel of=xv6.img seek=1 conv=notrunc
-419+1 records in
-419+1 records out
-214636 bytes (215 kB, 210 KiB) copied, 0.00124583 s, 172 MB/s
+423+1 records in
+423+1 records out
+217040 bytes (217 kB, 212 KiB) copied, 0.000317913 s, 683 MB/s
 gcc -Werror -Wall -o mkfs mkfs.c
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o ulib.o ulib.c
 gcc -m32 -gdwarf-2 -Wa,-divide   -c -o usys.o usys.S
@@ -141,9 +141,9 @@ objdump -S _test_1 > test_1.asm
 objdump -t _test_1 | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > test_1.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 679 blocks have been allocated
+balloc: first 678 blocks have been allocated
 balloc: write bitmap block at sector 58
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 
 
 test build PASSED
@@ -160,21 +160,21 @@ Simple mmap with MAP_ANON | MAP_FIXED
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_1.c
 Trying to build project using make
 make xv6.img fs.img
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 709 blocks have been allocated
+balloc: first 708 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -191,6 +191,7 @@ init: starting sh
 $ tester
 tester
 MMAP	 SUCCESS
+
 
 test test_1 PASSED (1 of 1)
  (Simple mmap with MAP_ANON | MAP_FIXED)
@@ -206,21 +207,21 @@ Simple mmap/munmap with MAP_ANON | MAP_FIXED
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_2.c
 Trying to build project using make
 make xv6.img fs.img
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 709 blocks have been allocated
+balloc: first 708 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -238,7 +239,6 @@ $ tester
 tester
 MMAP	 SUCCESS
 
-
 test test_2 PASSED (1 of 1)
  (Simple mmap/munmap with MAP_ANON | MAP_FIXED)
 
@@ -253,21 +253,21 @@ Access the mmap memory allocated with MAP_ANON | MAP_FIXED, then munmap
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_3.c
 Trying to build project using make
 make xv6.img fs.img
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 709 blocks have been allocated
+balloc: first 708 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -299,21 +299,21 @@ Try mmap MAP_ANON without MAP_FIXED
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_4.c
 Trying to build project using make
 make xv6.img fs.img
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 709 blocks have been allocated
+balloc: first 708 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -330,7 +330,6 @@ init: starting sh
 $ tester
 tester
 MMAP	 SUCCESS
-
 
 test test_4 PASSED (1 of 1)
  (Try mmap MAP_ANON without MAP_FIXED)
@@ -346,21 +345,21 @@ Try to allocate memory with MAP_FIXED at an illegal address
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_5.c
 Trying to build project using make
 make xv6.img fs.img
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 709 blocks have been allocated
+balloc: first 708 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -378,7 +377,6 @@ $ tester
 tester
 MMAP	 SUCCESS
 
-
 test test_5 PASSED (1 of 1)
  (Try to allocate memory with MAP_FIXED at an illegal address)
 
@@ -393,21 +391,21 @@ mmap a file
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_6.c
 Trying to build project using make
 make xv6.img fs.img
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 712 blocks have been allocated
+balloc: first 711 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -423,8 +421,6 @@ sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap star
 init: starting sh
 $ tester
 tester
- fd = 3
-666
 MMAP	 SUCCESS
 
 
@@ -442,21 +438,21 @@ Changes to the mmapped memory should be reflected in file after munmap
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_7.c
 Trying to build project using make
 make xv6.img fs.img
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 714 blocks have been allocated
+balloc: first 713 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -472,8 +468,6 @@ sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap star
 init: starting sh
 $ tester
 tester
- fd = 3
-666
 MMAP	 SUCCESS
 
 test test_7 PASSED (1 of 1)
@@ -490,21 +484,21 @@ MAP_GROWSUP that adds a single page to anonymous mapping
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_8.c
 Trying to build project using make
 make xv6.img fs.img
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 712 blocks have been allocated
+balloc: first 711 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -539,21 +533,21 @@ MAP_GROWSUP with file-backed mapping
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_9.c
 Trying to build project using make
 make xv6.img fs.img
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 714 blocks have been allocated
+balloc: first 713 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -588,21 +582,21 @@ Try growing memory without MAP_GROWSUP - should segfault
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_10.c
 Trying to build project using make
 make xv6.img fs.img
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 711 blocks have been allocated
+balloc: first 710 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -637,21 +631,21 @@ Two MAP_GROWSUP mappings with a single guard page in between - the lower should 
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_11.c
 Trying to build project using make
 make xv6.img fs.img
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 711 blocks have been allocated
+balloc: first 710 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -686,21 +680,21 @@ Child access to parent mmap
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_12.c
 Trying to build project using make
 make xv6.img fs.img
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 713 blocks have been allocated
+balloc: first 712 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -716,10 +710,6 @@ sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap star
 init: starting sh
 $ tester
 tester
-	Pagefault at virtual addr 60000000
-pid 4 tester: trap 14 err 4 on cpu 0 eip 0xa5 addr 0x60000000--kill proc
- fd = 3
-666
 MMAP	 SUCCESS
 
 test test_12 PASSED (1 of 1)
@@ -736,21 +726,21 @@ Changes made to mmapped memory should not be reflected in file when MAP_PRIVATE 
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_13.c
 Trying to build project using make
 make xv6.img fs.img
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
 objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
 ./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
 nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 714 blocks have been allocated
+balloc: first 713 blocks have been allocated
 balloc: write bitmap block at sector 58
 qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
@@ -783,14 +773,60 @@ Child should access file data with MAP_PRIVATE flag
 Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_14.c
 Trying to build project using make
 make xv6.img fs.img
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 make[1]: 'xv6.img' is up to date.
 make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
 make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
+gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
+ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
+objdump -S _tester > tester.asm
+objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
+./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
+nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
+balloc: first 712 blocks have been allocated
+balloc: write bitmap block at sector 58
+qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
+c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
+
+
+iPXE (https://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+1FF8B4A0+1FECB4A0 CA00
+Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
+
+
+Booting from Hard Disk..xv6...
+cpu0: starting 0
+sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap start 58
+init: starting sh
+$ tester
+tester
+MMAP	 SUCCESS
+
+test test_14 PASSED (1 of 1)
+ (Child should access file data with MAP_PRIVATE flag)
+
+starting test_15
+
+**********************************************************************
+
+Test test_15
+Parent should not see child mofications to memory with MAP_PRIVATE
+
+**********************************************************************
+Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_15.c
+Trying to build project using make
+make xv6.img fs.img
+/tmp/tmpy5fhlkex/p/Makefile
+/tmp/tmpy5fhlkex/p/Makefile.test
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
+make[1]: 'xv6.img' is up to date.
+make[1]: 'fs.img' is up to date.
+make[1]: Leaving directory '/tmp/tmpy5fhlkex/p'
+make qemu-nox CPUS=1
+make[1]: Entering directory '/tmp/tmpy5fhlkex/p'
 gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
 ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
 objdump -S _tester > tester.asm
@@ -813,57 +849,8 @@ sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap star
 init: starting sh
 $ tester
 tester
-	Pagefault at virtual addr 60000000
-pid 4 tester: trap 14 err 4 on cpu 0 eip 0xa5 addr 0x60000000--kill proc
 MMAP	 SUCCESS
 
-test test_14 PASSED (1 of 1)
- (Child should access file data with MAP_PRIVATE flag)
-
-starting test_15
-
-**********************************************************************
-
-Test test_15
-Parent should not see child mofications to memory with MAP_PRIVATE
-
-**********************************************************************
-Running xv6 user progam /home/cs537-1/tests/P5/ctests/test_15.c
-Trying to build project using make
-make xv6.img fs.img
-/tmp/tmpgfbeuycz/p/Makefile
-/tmp/tmpgfbeuycz/p/Makefile.test
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-make[1]: 'xv6.img' is up to date.
-make[1]: 'fs.img' is up to date.
-make[1]: Leaving directory '/tmp/tmpgfbeuycz/p'
-make qemu-nox CPUS=1
-make[1]: Entering directory '/tmp/tmpgfbeuycz/p'
-gcc -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer -fno-stack-protector -fno-pie -no-pie   -c -o tester.o tester.c
-ld -m    elf_i386 -N -e main -Ttext 0 -o _tester tester.o ulib.o usys.o printf.o umalloc.o
-objdump -S _tester > tester.asm
-objdump -t _tester | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$/d' > tester.sym
-./mkfs fs.img README _cat _echo _forktest _grep _init _kill _ln _ls _tester _mkdir _rm _sh _stressfs _usertests _wc _zombie _test_1 
-nmeta 59 (boot, super, log blocks 30 inode blocks 26, bitmap blocks 1) blocks 941 total 1000
-balloc: first 714 blocks have been allocated
-balloc: write bitmap block at sector 58
-qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 1 -m 512 
-c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
-
-
-iPXE (https://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+1FF8B4A0+1FECB4A0 CA00
-Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
-
-
-Booting from Hard Disk..xv6...
-cpu0: starting 0
-sb: size 1000 nblocks 941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap start 58
-init: starting sh
-$ tester
-tester
-	Pagefault at virtual addr 60000000
-pid 4 tester: trap 14 err 4 on cpu 0 eip 0xed addr 0x60000000--kill proc
-MMAP	 SUCCESS
 
 test test_15 PASSED (1 of 1)
  (Parent should not see child mofications to memory with MAP_PRIVATE)
