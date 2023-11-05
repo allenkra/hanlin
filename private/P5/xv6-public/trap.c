@@ -7,6 +7,7 @@
 #include "x86.h"
 #include "traps.h"
 #include "spinlock.h"
+#include "mmap.h"
 
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];
@@ -80,7 +81,64 @@ trap(struct trapframe *tf)
 
     // Page fault
   case T_PGFLT:
-    cprintf("\tPagefault at virtual addr %x\n", rcr2());
+    int ftaddr = rcr2();
+    int correct = 0;
+  
+    // out of mapping range
+    if(ftaddr < MMAPBASE || ftaddr > KERNBASE) {
+      cprintf("\tPagefault at virtual addr %x\n", ftaddr);
+      myproc()->killed = 1;
+    }
+
+    // next page is not free
+    if( is_region_free(myproc()->pgdir, (void*)ftaddr + PGSIZE, (uint)1 ) == 0) {
+      cprintf("Segmentation Fault\n");
+      myproc()->killed = 1;
+    }
+
+    // last page is free
+    if( is_region_free(myproc()->pgdir, (void*)ftaddr - PGSIZE, (uint)1 )) {
+      cprintf("\tPagefault at virtual addr %x\n", ftaddr);
+      myproc()->killed = 1;
+    }
+
+    int i;
+    int rdaddr = PGROUNDDOWN(ftaddr - PGSIZE);
+
+    // find the relative maparray[i]
+    for( i = 0; i < 32; i++) {
+      if (myproc()->maparray[i].addr == (void*)rdaddr) {
+        break;
+      }
+    }
+
+    // flag is not growsup
+    if ( !(myproc()->maparray[i].flag & MAP_GROWSUP)) {
+      cprintf("Segmentation Fault\n");
+      myproc()->killed = 1;
+    }
+    else {
+      // should grow guard page
+      myproc()->maparray[i].len += PGSIZE;
+      //cprintf("grow\n");
+      // void *addrfound = map_pages(myproc()->pgdir, (void *)ftaddr, 0, PTE_W | PTE_U);
+
+      // cprintf("addrfound = %d\n", (int )addrfound);
+      // if (addrfound <= (void *) 0) {
+      //   cprintf("\tPagefault at virtual addr %x\n", ftaddr);
+      //   myproc()->killed = 1;
+      // }
+      void *addrfound = map_one_pages(myproc()->pgdir, (void *)ftaddr, PTE_W | PTE_U);
+      if (addrfound < (void*)0){
+         cprintf("\tPagefault at virtual addr %x\n", ftaddr);
+         myproc()->killed = 1;
+      }
+      correct = 1;
+      //cprintf("end\n");
+    }
+    if ( correct )
+      break;
+
     // check permission
     // segmentation fault
     // grow page

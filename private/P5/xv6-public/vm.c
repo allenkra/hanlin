@@ -471,3 +471,26 @@ int copyrange(pde_t *pgdir_src, pde_t *pgdir_dst, uint start, uint end)
   }
   return 0;
 }
+
+void* map_one_pages(pde_t *pgdir, void *va, int perm) {
+  char *a;
+  uint pa;
+
+  a = (char*)PGROUNDDOWN((uint)va);
+
+    if ((pa = (uint)kalloc()) == 0) {
+      deallocuvm(pgdir, (uint)va, (uint)va);
+      return (void *)-1;  // Failed to allocate physical memory
+    }
+
+    memset((void*)pa, 0, PGSIZE);  // Zero out the physical memory
+
+    // Now use mappages to map the page
+    if (mappages(pgdir, a, PGSIZE, V2P(pa), perm) < 0) {
+      deallocuvm(pgdir, (uint)va, (uint)va);
+      kfree((char*)P2V(pa));  // Free the allocated physical memory
+      return (void *)-1;  // Failed to map the page
+    }
+  // target remote localhost:25394
+  return va;  // Success
+}
