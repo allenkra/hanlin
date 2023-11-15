@@ -15,3 +15,6 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm -f $(EXECUTABLE) $(OBJECTS)
+
+test:
+	~cs537-1/tests/P6/runtests

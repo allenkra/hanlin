@@ -47,6 +47,7 @@ void send_error_response(int client_fd, status_code_t err_code, char *err_msg) {
 /*
  * forward the client request to the fileserver and
  * forward the fileserver response to the client
+ * called by server when server accepted a new request
  */
 void serve_request(int client_fd) {
 
@@ -155,6 +156,8 @@ void serve_forever(int *server_fd) {
     struct sockaddr_in client_address;
     size_t client_address_length = sizeof(client_address);
     int client_fd;
+
+    // listening loop
     while (1) {
         client_fd = accept(*server_fd,
                            (struct sockaddr *)&client_address,
@@ -207,6 +210,7 @@ void print_settings() {
     printf("\t  ----\t----\t\n");
 }
 
+// siganl to close server
 void signal_callback_handler(int signum) {
     printf("Caught signal %d: %s\n", signum, strsignal(signum));
     for (int i = 0; i < num_listener; i++) {
