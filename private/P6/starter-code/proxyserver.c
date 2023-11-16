@@ -114,7 +114,7 @@ int server_fd;
  * the fd number of the server socket in *socket_number. For each accepted
  * connection, calls request_handler with the accepted fd number.
  */
-void serve_forever(int *server_fd) {
+void serve_forever(int *server_fd, int proxy_port) {
 
     // create a socket to listen
     *server_fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -131,8 +131,8 @@ void serve_forever(int *server_fd) {
         exit(errno);
     }
 
-
-    int proxy_port = listener_ports[0];
+    // now use the port passed
+    // int proxy_port = listener_ports[0];
     // create the full address of this proxyserver
     struct sockaddr_in proxy_address;
     memset(&proxy_address, 0, sizeof(proxy_address));
@@ -173,6 +173,7 @@ void serve_forever(int *server_fd) {
                inet_ntoa(client_address.sin_addr),
                client_address.sin_port);
 
+        // should call add_work() and cond_wait()
         serve_request(client_fd);
 
         // close the connection to the client
@@ -183,6 +184,15 @@ void serve_forever(int *server_fd) {
     shutdown(*server_fd, SHUT_RDWR);
     close(*server_fd);
 }
+
+// listener thread
+void *listener_thread(void *arg) {
+    int port = *(int*)arg;
+    int server_fd;
+    serve_forever(&server_fd, port);
+    pthread_exit(NULL);
+}
+
 
 /*
  * Default settings for in the global configuration variables
@@ -206,7 +216,7 @@ void print_settings() {
     for (int i = 0; i < num_listener; i++)
         printf(" %d", listener_ports[i]);
     printf(" ]\n");
-    printf("\t%d workers\n", num_listener);
+    printf("\t%d workers\n", num_workers);
     printf("\tfileserver ipaddr %s port %d\n", fileserver_ipaddr, fileserver_port);
     printf("\tmax queue size  %d\n", max_queue_size);
     printf("\t  ----\t----\t\n");
@@ -263,7 +273,17 @@ int main(int argc, char **argv) {
     // create pq
     pq = create_queue(max_queue_size);
 
-    serve_forever(&server_fd);
+    // serve_forever(&server_fd);
+    pthread_t *threads = malloc(num_listener * sizeof(pthread_t));
+    for (int i = 0; i < num_listener; i++) {
+        pthread_create(&threads[i], NULL, listener_thread, (void*)&listener_ports[i]);
+    }
+
+    // wait all thread exit
+    for (int i = 0; i < num_listener; i++) {
+        pthread_join(threads[i], NULL);
+        free(threads);
+    }
 
     // free pq
     free(pq);
