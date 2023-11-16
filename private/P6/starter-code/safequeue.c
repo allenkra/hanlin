@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "safequeue.h"
 
 // 创建一个新的优先队列
@@ -11,21 +12,37 @@ PriorityQueue* create_queue(int capacity) {
     return pq;
 }
 
+
+void copy_info(request_info *a, request_info b) {
+    a->client_fd = a->client_fd;
+    a->delay = b.delay;
+    if (b.path != NULL) {
+        a->path = (char *)malloc(strlen(b.path) + 1);
+        if (a->path == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(1);
+        }
+        strcpy(a->path, b.path);
+    } else {
+        a->path = NULL;
+    }
+}
 // 重新分配队列的大小
 // void resizePriorityQueue(PriorityQueue* pq, int new_capacity) {
 //     pq->items = (PQItem*)realloc(pq->items, sizeof(PQItem) * new_capacity);
 //     pq->capacity = new_capacity;
 // }
 
+
 // 插入操作
-void enqueue(PriorityQueue* pq, int value, int priority) {
+void add_work(PriorityQueue* pq, request_info value, int priority) {
     // if (pq->size == pq->capacity) {
     //     resizePriorityQueue(pq, pq->capacity * 2);
     // }
 
     // insert the new item to tail
     int i = pq->size++;
-    pq->items[i].value = value;
+    copy_info(&pq->items[i].value, value);
     pq->items[i].priority = priority;
 
     // resort the queue
@@ -39,15 +56,18 @@ void enqueue(PriorityQueue* pq, int value, int priority) {
 
 
 // dequeue
-int dequeue(PriorityQueue* pq) {
+int dequeue(PriorityQueue* pq, request_info *work) {
     if (pq->size == 0) {
         printf("Queue is empty\n");
         return -1;
     }
 
-    PQItem root = pq->items[0];
-    pq->items[0] = pq->items[--pq->size];
+    copy_info(work, pq->items[0].value);
+    free(pq->items[0].value.path);
 
+    // update size and heap
+    pq->items[0] = pq->items[--pq->size];
+    // work is the value for return, as a pointer
     // resort the queue
     int i = 0;
     while ((2 * i + 1) < pq->size) {
@@ -71,21 +91,22 @@ int dequeue(PriorityQueue* pq) {
         i = smallest;
     }
 
-    return root.value;
+    // dequeue seccesfully
+    return 1;
 }
 
 
+int get_work(PriorityQueue *pq, request_info *work) {
+    if (dequeue(pq, work) == 1)
+        return 1;
+    // should block workthread itself
+    // should cond_wait
+    return -1;
+}
 
-// // 主函数用于测试优先队列
-// int main() {
-//     PriorityQueue* pq = create_queue(5);
-//     enqueue(pq, 10, 2);
-//     enqueue(pq, 15, 1);
-//     enqueue(pq, 20, 3);
-
-//     printf("Dequeued element: %d\n", dequeue(pq));
-//     printf("Dequeued element: %d\n", dequeue(pq));
-//     printf("Dequeued element: %d\n", dequeue(pq));
-
-//     return 0;
-// }
+int get_work_nonblocking(PriorityQueue *pq, request_info *work) {
+    if (dequeue(pq, work) == 1)
+        return 1;
+    // called by listen thread and won't block
+    return -1;
+}

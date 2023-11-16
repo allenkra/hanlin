@@ -34,6 +34,7 @@ int num_workers;
 char *fileserver_ipaddr;
 int fileserver_port;
 int max_queue_size;
+PriorityQueue *pq;
 
 void send_error_response(int client_fd, status_code_t err_code, char *err_msg) {
     http_start_response(client_fd, err_code);
@@ -260,7 +261,6 @@ int main(int argc, char **argv) {
 
     print_settings();
     // create pq
-    PriorityQueue *pq;
     pq = create_queue(max_queue_size);
 
     serve_forever(&server_fd);
