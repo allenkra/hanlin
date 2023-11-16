@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 #include "proxyserver.h"
+#include "safequeue.h"
 
 
 /*
@@ -256,9 +257,15 @@ int main(int argc, char **argv) {
             exit_with_usage();
         }
     }
+
     print_settings();
+    // create pq
+    PriorityQueue *pq;
+    pq = create_queue(max_queue_size);
 
     serve_forever(&server_fd);
 
+    // free pq
+    free(pq);
     return EXIT_SUCCESS;
 }
