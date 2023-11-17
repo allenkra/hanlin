@@ -36,6 +36,14 @@ int fileserver_port;
 int max_queue_size;
 PriorityQueue *pq;
 
+/**
+ * sync vars
+*/
+pthread_mutex_t mutex;
+pthread_cond_t empty;
+pthread_cond_t add;
+
+
 void send_error_response(int client_fd, status_code_t err_code, char *err_msg) {
     http_start_response(client_fd, err_code);
     http_send_header(client_fd, "Content-Type", "text/html");
@@ -102,6 +110,9 @@ void serve_request(int client_fd) {
     // close the connection to the fileserver
     shutdown(fileserver_fd, SHUT_WR);
     close(fileserver_fd);
+    // close the connection to the client
+    shutdown(client_fd, SHUT_WR);
+    close(client_fd);
 
     // Free resources and exit
     free(buffer);
@@ -173,12 +184,31 @@ void serve_forever(int *server_fd, int proxy_port) {
                inet_ntoa(client_address.sin_addr),
                client_address.sin_port);
 
-        // should call add_work() and cond_wait()
-        serve_request(client_fd);
+        // should now read and parse
 
+        /**
+         * should work as produser
+         * call add_work and cond_wait()
+        */
+        pthread_mutex_lock(&mutex);
+        while(pq->size == max_queue_size){
+            // should send error message and wait()
+            pthread_cond_wait(&empty, &mutex);
+        }
+        /**
+         * todo:
+         * should add_work()
+        */
+        
+        pthread_cond_signal(&add);
+        pthread_mutex_unlock(&mutex);
+
+
+        serve_request(client_fd);
+        
         // close the connection to the client
-        shutdown(client_fd, SHUT_WR);
-        close(client_fd);
+        // shutdown(client_fd, SHUT_WR);
+        // close(client_fd);
     }
 
     shutdown(*server_fd, SHUT_RDWR);
@@ -193,6 +223,36 @@ void *listener_thread(void *arg) {
     pthread_exit(NULL);
 }
 
+void *worker_thread(void *arg) {
+    /**
+     * should be similar to consumer
+     * call getwork()
+     * if -1 , empty, cond_wait
+     * else , delay and then call serve_request()
+    */
+
+    request_info *work = (request_info*)malloc(sizeof(request_info));
+    // work forever
+    while(1) {
+        pthread_mutex_lock(&mutex);
+        while ( pq->size == 0) {
+            pthread_cond_wait(&add, &mutex);
+        }
+        // get work from pq
+        get_work(pq, work);
+        pthread_cond_signal(&empty);
+        pthread_mutex_unlock(&mutex);
+        // delay, canbe zero
+        if(work->delay != 0)
+            sleep(work->delay);
+        
+        serve_request(work->client_fd);
+        
+       
+    }
+
+    
+}
 
 /*
  * Default settings for in the global configuration variables
@@ -269,23 +329,46 @@ int main(int argc, char **argv) {
         }
     }
 
+    // initialize all locks
+    pthread_mutex_init(&mutex, NULL);
+    pthread_cond_init(&empty, NULL);
+    pthread_cond_init(&add, NULL);
+
     print_settings();
     // create pq
     pq = create_queue(max_queue_size);
 
     // serve_forever(&server_fd);
-    pthread_t *threads = malloc(num_listener * sizeof(pthread_t));
+    pthread_t *listener_threads = malloc(num_listener * sizeof(pthread_t));
     for (int i = 0; i < num_listener; i++) {
-        pthread_create(&threads[i], NULL, listener_thread, (void*)&listener_ports[i]);
+        pthread_create(&listener_threads[i], NULL, listener_thread, (void*)&listener_ports[i]);
     }
 
-    // wait all thread exit
+    // wait all listener_thread exit
     for (int i = 0; i < num_listener; i++) {
-        pthread_join(threads[i], NULL);
-        free(threads);
+        pthread_join(listener_threads[i], NULL);
+        free(listener_threads);
+    }
+
+    pthread_t *worker_threads = malloc(num_workers * sizeof(pthread_t));
+    for (int i = 0; i < num_workers; i++) {
+        pthread_create(&worker_threads[i], NULL, worker_thread, NULL);
+    }
+
+    // wait all listener_thread exit
+    for (int i = 0; i < num_workers; i++) {
+        pthread_join(worker_threads[i], NULL);
+        free(worker_threads);
     }
 
     // free pq
+    pthread_mutex_lock(&mutex);
     free(pq);
+    pthread_mutex_unlock(&mutex);
+
+    // release all the locks
+    pthread_mutex_destroy(&mutex);
+    pthread_cond_destroy(&empty);
+    pthread_cond_destroy(&add);
     return EXIT_SUCCESS;
 }
