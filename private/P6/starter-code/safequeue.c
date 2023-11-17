@@ -14,7 +14,7 @@ PriorityQueue* create_queue(int capacity) {
 
 
 void copy_info(request_info *a, request_info b) {
-    a->client_fd = a->client_fd;
+    a->client_fd = b.client_fd;
     a->delay = b.delay;
     if (b.path != NULL) {
         a->path = (char *)malloc(strlen(b.path) + 1);
@@ -25,6 +25,16 @@ void copy_info(request_info *a, request_info b) {
         strcpy(a->path, b.path);
     } else {
         a->path = NULL;
+    }
+    if (b.buffer != NULL) {
+        a->buffer = (char *)malloc(strlen(b.buffer) + 1);
+        if (a->buffer == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(1);
+        }
+        strcpy(a->buffer, b.buffer);
+    } else {
+        a->buffer = NULL;
     }
 }
 // 重新分配队列的大小

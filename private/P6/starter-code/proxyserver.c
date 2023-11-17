@@ -59,7 +59,7 @@ void send_error_response(int client_fd, status_code_t err_code, char *err_msg) {
  * forward the fileserver response to the client
  * called by server when server accepted a new request
  */
-void serve_request(int client_fd) {
+void serve_request(int client_fd, char* buffer) {
 
     // create a fileserver socket
     int fileserver_fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -85,11 +85,13 @@ void serve_request(int client_fd) {
     }
 
     // successfully connected to the file server
-    char *buffer = (char *)malloc(RESPONSE_BUFSIZE * sizeof(char));
+    // char *buffer = (char *)malloc(RESPONSE_BUFSIZE * sizeof(char));
 
     // forward the client request to the fileserver
-    int bytes_read = read(client_fd, buffer, RESPONSE_BUFSIZE);
-    int ret = http_send_data(fileserver_fd, buffer, bytes_read);
+    // int bytes_read = read(client_fd, buffer, RESPONSE_BUFSIZE);
+    
+    int ret = http_send_data(fileserver_fd, buffer, strlen(buffer));
+    // int ret = http_send_data(fileserver_fd, buffer, bytes_read);
     if (ret < 0) {
         printf("Failed to send request to the file server\n");
         send_error_response(client_fd, BAD_GATEWAY, "Bad Gateway");
@@ -247,6 +249,8 @@ void serve_forever(int *server_fd, int proxy_port) {
         fprintf(log_file, "Received request: \n%s", buffer);
         request_info req_info = parse_request(buffer);
         req_info.client_fd = client_fd;
+        char *buffer_copy = strdup(buffer);
+        req_info.buffer = buffer_copy;
         fprintf(log_file, "Parse results:\n");
         fprintf(log_file, "--------------\n");
         fprintf(log_file, "delay: %d\n", req_info.delay);
@@ -318,7 +322,7 @@ void *worker_thread(void *arg) {
         if(work->delay != 0)
             sleep(work->delay);
         
-        serve_request(work->client_fd);
+        serve_request(work->client_fd, work->buffer);
         
        
     }

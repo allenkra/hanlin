@@ -7,6 +7,7 @@ typedef struct
     int delay;
     int client_fd;
     char* path;
+    char* buffer;
 } request_info;
 
 
