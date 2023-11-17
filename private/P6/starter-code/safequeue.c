@@ -14,7 +14,7 @@ PriorityQueue* create_queue(int capacity) {
 
 
 void copy_info(request_info *a, request_info b) {
-    a->client_fd = a->client_fd;
+    a->client_fd = b.client_fd;
     a->delay = b.delay;
     if (b.path != NULL) {
         a->path = (char *)malloc(strlen(b.path) + 1);
