@@ -54,6 +54,19 @@ void send_error_response(int client_fd, status_code_t err_code, char *err_msg) {
     return;
 }
 
+void send_GetJob_response(int client_fd, char *path) {
+    char strLength[3];
+    sprintf(strLength, "%d", (int)strlen(path));
+    http_start_response(client_fd, 200);
+    http_send_header(client_fd, "Content-type", "text/plain");
+    // http_send_header(client_fd, "Content-length", strlen(path));
+    http_send_header(client_fd, "Content-length", strLength);
+    // http_send_header(client_fd, "Server", "httpserver/1.0");
+    http_end_headers(client_fd);
+    http_send_string(client_fd, path);
+    return;
+}
+
 /*
  * forward the client request to the fileserver and
  * forward the fileserver response to the client
@@ -248,6 +261,20 @@ void serve_forever(int *server_fd, int proxy_port) {
         buffer[bytes_read] = '\0';
         fprintf(log_file, "Received request: \n%s", buffer);
         request_info req_info = parse_request(buffer);
+        request_info *getjob = (request_info *)malloc(sizeof(request_info));
+        pthread_mutex_lock(&mutex);
+        if (strcmp(req_info.path, "/GetJob") == 0) {
+            if (get_work_nonblocking(pq, getjob) == -1) {
+                send_error_response(client_fd, QUEUE_EMPTY, http_get_response_message(QUEUE_EMPTY));
+            }
+            else {
+                send_GetJob_response(client_fd, getjob->path);
+            }
+            shutdown(client_fd, SHUT_WR);
+            close(client_fd);
+            continue;            
+        } 
+        pthread_mutex_unlock(&mutex);
         req_info.client_fd = client_fd;
         char *buffer_copy = strdup(buffer);
         req_info.buffer = buffer_copy;
