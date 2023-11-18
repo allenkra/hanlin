@@ -270,6 +270,7 @@ void serve_forever(int *server_fd, int proxy_port) {
             else {
                 send_GetJob_response(client_fd, getjob->path);
             }
+            pthread_mutex_unlock(&mutex);
             shutdown(client_fd, SHUT_WR);
             close(client_fd);
             continue;            

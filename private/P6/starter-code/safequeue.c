@@ -56,7 +56,7 @@ void add_work(PriorityQueue* pq, request_info value, int priority) {
     pq->items[i].priority = priority;
 
     // resort the queue
-    while (i != 0 && pq->items[i].priority < pq->items[(i - 1) / 2].priority) {
+    while (i != 0 && pq->items[i].priority > pq->items[(i - 1) / 2].priority) {
         PQItem temp = pq->items[i];
         pq->items[i] = pq->items[(i - 1) / 2];
         pq->items[(i - 1) / 2] = temp;
@@ -83,22 +83,22 @@ int dequeue(PriorityQueue* pq, request_info *work) {
     while ((2 * i + 1) < pq->size) {
         int left = 2 * i + 1;
         int right = 2 * i + 2;
-        int smallest = i;
+        int largest = i;
 
-        if (pq->items[left].priority < pq->items[i].priority) {
-            smallest = left;
+        if (left < pq->size && pq->items[left].priority > pq->items[i].priority) {
+            largest = left;
         }
-        if (right < pq->size && pq->items[right].priority < pq->items[smallest].priority) {
-            smallest = right;
+        if (right < pq->size && pq->items[right].priority > pq->items[largest].priority) {
+            largest = right;
         }
-        if (smallest == i) {
+        if (largest == i) {
             break;
         }
 
         PQItem temp = pq->items[i];
-        pq->items[i] = pq->items[smallest];
-        pq->items[smallest] = temp;
-        i = smallest;
+        pq->items[i] = pq->items[largest];
+        pq->items[largest] = temp;
+        i = largest;
     }
 
     // dequeue seccesfully
