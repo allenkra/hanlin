@@ -270,6 +270,7 @@ void serve_forever(int *server_fd, int proxy_port) {
             pthread_mutex_unlock(&mutex);
             shutdown(client_fd, SHUT_WR);
             close(client_fd);
+            free(getjob);
             continue;            
         } 
         pthread_mutex_unlock(&mutex);
@@ -296,6 +297,7 @@ void serve_forever(int *server_fd, int proxy_port) {
         add_work(pq, req_info, priority);
         pthread_cond_signal(&add);
         pthread_mutex_unlock(&mutex);
+        free(getjob);
 
 
         // serve_request(client_fd);
@@ -304,7 +306,7 @@ void serve_forever(int *server_fd, int proxy_port) {
         // shutdown(client_fd, SHUT_WR);
         // close(client_fd);
     }
-
+    
     shutdown(*server_fd, SHUT_RDWR);
     close(*server_fd);
 }
@@ -344,6 +346,7 @@ void *worker_thread(void *arg) {
         
        
     }
+    free(work);
 
     
 }
