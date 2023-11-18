@@ -292,7 +292,10 @@ void serve_forever(int *server_fd, int proxy_port) {
         */
         pthread_mutex_lock(&mutex);
         while(pq->size == max_queue_size){
-            // should send error message and wait()
+            // queue is full
+            send_error_response(client_fd, QUEUE_FULL, http_get_response_message(QUEUE_FULL));
+            shutdown(client_fd, SHUT_WR);
+            close(client_fd);
             pthread_cond_wait(&empty, &mutex);
         }
         /**
