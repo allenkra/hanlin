@@ -458,13 +458,11 @@ int main(int argc, char **argv) {
     // FILE *log_file = fopen("server_log.txt", "w");
 
     // serve_forever(&server_fd);
-    pthread_mutex_lock(&mutex);
     pthread_t *listener_threads = malloc(num_listener * sizeof(pthread_t));
     for (int i = 0; i < num_listener; i++) {
         pthread_create(&listener_threads[i], NULL, listener_thread, (void*)&listener_ports[i]);
         // fprintf(log_file, "Hello from listening thread\n");
     }
-    pthread_mutex_unlock(&mutex);
 
     pthread_t *worker_threads = malloc(num_workers * sizeof(pthread_t));
     for (int i = 0; i < num_workers; i++) {
