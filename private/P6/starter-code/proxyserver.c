@@ -75,11 +75,13 @@ void send_GetJob_response(int client_fd, char *path) {
 void serve_request(int client_fd, char* buffer) {
 
     // create a fileserver socket
+    pthread_mutex_lock(&mutex);
     int fileserver_fd = socket(PF_INET, SOCK_STREAM, 0);
     if (fileserver_fd == -1) {
         fprintf(stderr, "Failed to create a new socket: error %d: %s\n", errno, strerror(errno));
         exit(errno);
     }
+    pthread_mutex_unlock(&mutex);
 
     // create the full fileserver address
     struct sockaddr_in fileserver_address;
@@ -192,6 +194,8 @@ int server_fd;
  */
 void serve_forever(int *server_fd, int proxy_port) {
 
+    pthread_mutex_lock(&mutex);
+
     // create a socket to listen
     *server_fd = socket(PF_INET, SOCK_STREAM, 0);
     if (*server_fd == -1) {
@@ -234,14 +238,18 @@ void serve_forever(int *server_fd, int proxy_port) {
     struct sockaddr_in client_address;
     size_t client_address_length = sizeof(client_address);
     int client_fd;
-    FILE *log_file = fopen("server_listening_thread_log.txt", "w");
+
+
+    pthread_mutex_unlock(&mutex);
+
+    // FILE *log_file = fopen("server_listening_thread_log.txt", "w");
     // listening loop
     while (1) {
         client_fd = accept(*server_fd,
                            (struct sockaddr *)&client_address,
                            (socklen_t *)&client_address_length);
         if (client_fd < 0) {
-            fprintf(log_file, "Error accepting socket\n");
+            // fprintf(log_file, "Error accepting socket\n");
             perror("Error accepting socket");
             continue;
         }
@@ -259,7 +267,7 @@ void serve_forever(int *server_fd, int proxy_port) {
             continue;
         }
         buffer[bytes_read] = '\0';
-        fprintf(log_file, "Received request: \n%s", buffer);
+        // fprintf(log_file, "Received request: \n%s", buffer);
         request_info req_info = parse_request(buffer);
         request_info *getjob = (request_info *)malloc(sizeof(request_info));
         pthread_mutex_lock(&mutex);
@@ -279,32 +287,34 @@ void serve_forever(int *server_fd, int proxy_port) {
         req_info.client_fd = client_fd;
         char *buffer_copy = strdup(buffer);
         req_info.buffer = buffer_copy;
-        fprintf(log_file, "Parse results:\n");
-        fprintf(log_file, "--------------\n");
-        fprintf(log_file, "delay: %d\n", req_info.delay);
-        fprintf(log_file, "client_fd: %d\n", req_info.client_fd);
-        fprintf(log_file, "path: %s\n", req_info.path);
+        // fprintf(log_file, "Parse results:\n");
+        // fprintf(log_file, "--------------\n");
+        // fprintf(log_file, "delay: %d\n", req_info.delay);
+        // fprintf(log_file, "client_fd: %d\n", req_info.client_fd);
+        // fprintf(log_file, "path: %s\n", req_info.path);
         int priority = get_priority_from_path(req_info.path);
-        fprintf(log_file, "priority: %d\n", priority);
-        fprintf(log_file, "--------------\n");
+        // fprintf(log_file, "priority: %d\n", priority);
+        // fprintf(log_file, "--------------\n");
         /**
          * should work as produser
          * call add_work and cond_wait()
         */
         pthread_mutex_lock(&mutex);
-        while(pq->size == max_queue_size){
+        if(pq->size == max_queue_size){
             // queue is full
             send_error_response(client_fd, QUEUE_FULL, http_get_response_message(QUEUE_FULL));
             shutdown(client_fd, SHUT_WR);
             close(client_fd);
-            pthread_cond_wait(&empty, &mutex);
+            pthread_mutex_unlock(&mutex);
+            continue;
+            // pthread_cond_wait(&empty, &mutex);
         }
         /**
          * todo:
          * should add_work()
         */
         add_work(pq, req_info, priority);
-        fprintf(log_file, "Listening thread have added the work!\n");
+        // fprintf(log_file, "Listening thread have added the work!\n");
         pthread_cond_signal(&add);
         pthread_mutex_unlock(&mutex);
 
@@ -347,7 +357,7 @@ void *worker_thread(void *arg) {
         // get work from pq
         get_work(pq, work);
         fprintf(log_file, "Worker thread have got the work!\n");
-        pthread_cond_signal(&empty);
+        // pthread_cond_signal(&empty);
         pthread_mutex_unlock(&mutex);
         // delay, canbe zero
         if(work->delay != 0)
@@ -357,8 +367,8 @@ void *worker_thread(void *arg) {
         
        
     }
-
-    
+    free(work);
+    pthread_exit(NULL);
 }
 
 /*
@@ -445,19 +455,21 @@ int main(int argc, char **argv) {
     // create pq
     pq = create_queue(max_queue_size);
 
-    FILE *log_file = fopen("server_log.txt", "w");
+    // FILE *log_file = fopen("server_log.txt", "w");
 
     // serve_forever(&server_fd);
+    pthread_mutex_lock(&mutex);
     pthread_t *listener_threads = malloc(num_listener * sizeof(pthread_t));
     for (int i = 0; i < num_listener; i++) {
         pthread_create(&listener_threads[i], NULL, listener_thread, (void*)&listener_ports[i]);
-        fprintf(log_file, "Hello from listening thread\n");
+        // fprintf(log_file, "Hello from listening thread\n");
     }
+    pthread_mutex_unlock(&mutex);
 
     pthread_t *worker_threads = malloc(num_workers * sizeof(pthread_t));
     for (int i = 0; i < num_workers; i++) {
         pthread_create(&worker_threads[i], NULL, worker_thread, NULL);
-        fprintf(log_file, "Hello from worker thread\n");
+        // fprintf(log_file, "Hello from worker thread\n");
     }
 
     // wait all listener_thread exit
@@ -474,6 +486,9 @@ int main(int argc, char **argv) {
 
     // free pq
     pthread_mutex_lock(&mutex);
+    for (int i = 0; i < max_queue_size; i++){
+        free(pq->items);
+    }
     free(pq);
     pthread_mutex_unlock(&mutex);
 
