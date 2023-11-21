@@ -132,7 +132,7 @@ void serve_request(int client_fd, char* buffer) {
     close(client_fd);
 
     // Free resources and exit
-    free(buffer);
+    // free(buffer);
 }
 
 request_info parse_request(const char *request) {
@@ -347,7 +347,7 @@ void *worker_thread(void *arg) {
     */
 
     request_info *work = (request_info*)malloc(sizeof(request_info));
-    FILE *log_file = fopen("server_worker_thread_log.txt", "w");
+    // FILE *log_file = fopen("server_worker_thread_log.txt", "w");
     // work forever
     while(1) {
         pthread_mutex_lock(&mutex);
@@ -356,7 +356,7 @@ void *worker_thread(void *arg) {
         }
         // get work from pq
         get_work(pq, work);
-        fprintf(log_file, "Worker thread have got the work!\n");
+        // fprintf(log_file, "Worker thread have got the work!\n");
         // pthread_cond_signal(&empty);
         pthread_mutex_unlock(&mutex);
         // delay, canbe zero
@@ -364,6 +364,8 @@ void *worker_thread(void *arg) {
             sleep(work->delay);
         
         serve_request(work->client_fd, work->buffer);
+        free(work->path);
+        free(work->buffer);
         
        
     }

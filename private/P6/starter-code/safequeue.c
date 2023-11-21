@@ -74,9 +74,15 @@ int dequeue(PriorityQueue* pq, request_info *work) {
 
     copy_info(work, pq->items[0].value);
     free(pq->items[0].value.path);
+    // free(pq->items[0].value.buffer);
 
     // update size and heap
-    pq->items[0] = pq->items[--pq->size];
+    pq->size--;
+    pq->items[0].priority = pq->items[pq->size].priority;
+    copy_info(&pq->items[0].value, pq->items[pq->size].value);
+
+    // pq->items[0] = pq->items[--pq->size];
+
     // work is the value for return, as a pointer
     // resort the queue
     int i = 0;
