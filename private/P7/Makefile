@@ -22,3 +22,5 @@ fsck.wfs:
 .PHONY: clean
 clean:
 	rm -rf $(NAME)
+test:
+	~cs537-1/tests/P7/start.py

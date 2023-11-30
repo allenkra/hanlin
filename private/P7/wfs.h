@@ -31,6 +31,17 @@ struct wfs_dentry {
     unsigned long inode_number;
 };
 
+struct wfs_inode *get_inode(unsigned int ino);
+// unsigned long inode_for_name(char *name, struct wfs_log_entry *l);
+struct wfs_inode *path_to_inode(const char *path);
+
+struct wfs_private {
+    int fd;
+    void *disk;
+    unsigned long len;
+    size_t head;
+};
+
 struct wfs_log_entry {
     struct wfs_inode inode;
     char data[];
