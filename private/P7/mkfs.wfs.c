@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
+#include "wfs.h"
 
 /**
  * Open the disk file (or device).
@@ -12,10 +15,7 @@ This process is akin to formatting a disk with a new filesystem.
 */
 
 
-// Define the size of the file system and other constants
-#define FS_SIZE 10485760 // Example size, e.g., 10MB
 
-// Function to initialize the file system
 void initialize_fs(const char *path) {
     int fd = open(path, O_RDWR | O_CREAT, 0666);
     if (fd < 0) {
@@ -23,26 +23,40 @@ void initialize_fs(const char *path) {
         exit(1);
     }
 
-    // Allocate and zero-initialize a buffer
-    char *buffer = calloc(1, FS_SIZE);
-    if (!buffer) {
-        perror("Failed to allocate memory");
+    // get the file size
+    struct stat sb;
+    if (fstat(fd, &sb) == -1) {
+        perror("Failed to get file size");
         close(fd);
-        exit(1);
+        return 1;
     }
 
-    // Initialize file system structures here
-    // ...
-
-    // Write the buffer to the file
-    if (write(fd, buffer, FS_SIZE) != FS_SIZE) {
-        perror("Failed to write file system to disk image");
-        free(buffer);
+    // mmap disk
+    void *mapped = mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (mapped == MAP_FAILED) {
+        perror("Failed to map file");
         close(fd);
-        exit(1);
+        return 1;
     }
 
-    free(buffer);
+    // init sb and log entry
+    struct wfs_sb *sbPtr = (struct wfs_sb *)mapped;
+    // set the value of  Superblock
+    // TODO
+    
+    struct wfs_log_entry *logPtr = (struct wfs_log_entry *)((char *)mapped + sizeof( struct wfs_sb));  // log entry is located just after Superblock
+    // set the value of Log Entry
+    // TODO
+
+    // synchorize to disk
+    if (msync(mapped, sb.st_size, MS_SYNC) == -1) {
+        perror("Failed to sync changes");
+    }
+
+    if (munmap(mapped, sb.st_size) == -1) {
+        perror("Failed to unmap memory");
+    }
+
     close(fd);
 }
 
@@ -52,6 +66,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    // pass the disk path
     initialize_fs(argv[1]);
 
     return 0;
