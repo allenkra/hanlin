@@ -22,3 +22,7 @@ private/P3/.__afsE7F3
 private/P4/xv6-public/runtests.log
 private/P6/starter-code/runtests
 private/P6/starter-code/start.py
+private/P7/mount.wfs
+private/P7/disk
+private/P7/fsck.wfs
+private/P7/mkfs.wfs

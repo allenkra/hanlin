@@ -5,6 +5,11 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/mman.h>
+#include <time.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include "wfs.h"
 
 static int wfs_getattr(const char *path, struct stat *stbuf) {
     // Implementation of getattr function to retrieve file attributes
@@ -60,5 +65,36 @@ static struct fuse_operations ops = {
 
 int main(int argc, char *argv[]) {
     // Filter argc and argv here and then pass it to fuse_main
+    int i = 3;
+    char *disk_arg = NULL; // Pointer to store disk argument
+
+    disk_arg = argv[i];
+    // Remove 'disk' from argv
+    memmove(&argv[i], &argv[i + 1], (argc - i - 1) * sizeof(char*));
+    argc--;
+
+    // open disk
+    int fd = open(disk_arg, O_RDWR | O_CREAT, 0666);
+    if (fd < 0) {
+        perror("Failed to open disk image");
+        exit(1);
+    }
+
+    // get the file size
+    struct stat sb;
+    if (fstat(fd, &sb) == -1) {
+        perror("Failed to get file size");
+        close(fd);
+        exit(1);
+    }
+
+    // mmap disk
+    void *disk = mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (disk == MAP_FAILED) {
+        perror("Failed to map file");
+        close(fd);
+        exit(1);
+    }
+
     return fuse_main(argc, argv, &ops, NULL);
 }
