@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 #include "wfs.h"
 
 /**
@@ -28,7 +29,7 @@ void initialize_fs(const char *path) {
     if (fstat(fd, &sb) == -1) {
         perror("Failed to get file size");
         close(fd);
-        return 1;
+        exit(1);
     }
 
     // mmap disk
@@ -36,18 +37,34 @@ void initialize_fs(const char *path) {
     if (mapped == MAP_FAILED) {
         perror("Failed to map file");
         close(fd);
-        return 1;
+        exit(1);
     }
 
     // init sb and log entry
     struct wfs_sb *sbPtr = (struct wfs_sb *)mapped;
-    // set the value of  Superblock
-    // TODO
+    sbPtr->magic = 0xdeadbeef;
     
     struct wfs_log_entry *logPtr = (struct wfs_log_entry *)((char *)mapped + sizeof( struct wfs_sb));  // log entry is located just after Superblock
     // set the value of Log Entry
     // TODO
+    logPtr->inode.inode_number = 1; 
+    logPtr->inode.deleted = 0;      
+    logPtr->inode.mode = S_IFREG;   
+    logPtr->inode.uid = 0;          
+    logPtr->inode.gid = 0;          
+    logPtr->inode.flags = 0;       
+    logPtr->inode.size = 0;         
+    logPtr->inode.atime = time(NULL); 
+    logPtr->inode.mtime = time(NULL); 
+    logPtr->inode.ctime = time(NULL); 
+    logPtr->inode.links = 1;
+    // logPtr->data = NULL;
 
+
+    // set head
+    size_t offset = sizeof(struct wfs_sb) + sizeof(struct wfs_log_entry);
+    sbPtr->head = (uint32_t)offset; 
+     
     // synchorize to disk
     if (msync(mapped, sb.st_size, MS_SYNC) == -1) {
         perror("Failed to sync changes");
