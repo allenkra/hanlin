@@ -47,9 +47,9 @@ void initialize_fs(const char *path) {
     struct wfs_log_entry *logPtr = (struct wfs_log_entry *)((char *)mapped + sizeof( struct wfs_sb));  // log entry is located just after Superblock
     // set the value of Log Entry
     // TODO
-    logPtr->inode.inode_number = 1; 
+    logPtr->inode.inode_number = 0; 
     logPtr->inode.deleted = 0;      
-    logPtr->inode.mode = S_IFREG;   
+    logPtr->inode.mode = S_IFDIR;   
     logPtr->inode.uid = 0;          
     logPtr->inode.gid = 0;          
     logPtr->inode.flags = 0;       
