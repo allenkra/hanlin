@@ -65,19 +65,22 @@ static struct fuse_operations ops = {
 
 int main(int argc, char *argv[]) {
 
-    // should be like ./mount.wfs -f -s disk mnt
-    if (argc != 5) {
-        fprintf(stderr, "Usage: %s <disk_path>\n", argv[0]);
-        return 1;
-    }
+    // should be like ./mount.wfs -f -s disk mnt or without -f
+    int i;
+    char *disk_arg = NULL;
     // Filter argc and argv here and then pass it to fuse_main
-    int i = 3;
-    char *disk_arg = NULL; // Pointer to store disk argument
 
-    disk_arg = argv[i];
-    // Remove 'disk' from argv
-    memmove(&argv[i], &argv[i + 1], (argc - i - 1) * sizeof(char*));
-    argc--;
+    // Iterate over arguments
+    for (i = 1; i < argc; i++) {
+        if (!(strcmp(argv[i], "-f") == 0 || strcmp(argv[i], "-s") == 0)) {
+            disk_arg = argv[i]; // Save the disk argument
+            // Remove 'disk' from argv
+            memmove(&argv[i], &argv[i + 1], (argc - i - 1) * sizeof(char*));
+            argc--; 
+            i--; 
+            break;
+        }
+    }
 
     // open disk
     int fd = open(disk_arg, O_RDWR | O_CREAT, 0666);
@@ -101,6 +104,10 @@ int main(int argc, char *argv[]) {
         close(fd);
         exit(1);
     }
+
+    // for (i = 0; i < argc; i++) {
+    //     printf("argv[%d] = %s\n", i, argv[i]);
+    // }
 
     int fuse_return_value = fuse_main(argc, argv, &ops, NULL);
 
