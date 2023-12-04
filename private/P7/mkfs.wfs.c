@@ -25,15 +25,15 @@ void initialize_fs(const char *path) {
     }
 
     // get the file size
-    struct stat sb;
-    if (fstat(fd, &sb) == -1) {
+    struct stat file_atr;
+    if (fstat(fd, &file_atr) == -1) {
         perror("Failed to get file size");
         close(fd);
         exit(1);
     }
 
     // mmap disk
-    void *mapped = mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    void *mapped = mmap(NULL, file_atr.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (mapped == MAP_FAILED) {
         perror("Failed to map file");
         close(fd);
@@ -66,11 +66,11 @@ void initialize_fs(const char *path) {
     sbPtr->head = (uint32_t)offset; 
      
     // synchorize to disk
-    if (msync(mapped, sb.st_size, MS_SYNC) == -1) {
+    if (msync(mapped, file_atr.st_size, MS_SYNC) == -1) {
         perror("Failed to sync changes");
     }
 
-    if (munmap(mapped, sb.st_size) == -1) {
+    if (munmap(mapped, file_atr.st_size) == -1) {
         perror("Failed to unmap memory");
     }
 

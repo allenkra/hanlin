@@ -64,6 +64,12 @@ static struct fuse_operations ops = {
 };
 
 int main(int argc, char *argv[]) {
+
+    // should be like ./mount.wfs -f -s disk mnt
+    if (argc != 5) {
+        fprintf(stderr, "Usage: %s <disk_path>\n", argv[0]);
+        return 1;
+    }
     // Filter argc and argv here and then pass it to fuse_main
     int i = 3;
     char *disk_arg = NULL; // Pointer to store disk argument
@@ -96,5 +102,13 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    return fuse_main(argc, argv, &ops, NULL);
+    int fuse_return_value = fuse_main(argc, argv, &ops, NULL);
+
+    if (munmap(disk, sb.st_size) == -1) {
+        perror("Failed to unmap memory");
+    }
+
+    close(fd);
+
+    return fuse_return_value;
 }
