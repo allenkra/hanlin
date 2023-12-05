@@ -26,18 +26,21 @@ unsigned int *path_to_inode_number(const char *path){
 static int wfs_getattr(const char *path, struct stat *stbuf) {
     // Implementation of getattr function to retrieve file attributes
     // ...
+    // ok
     return 0; // Return 0 on success
 }
 
 static int wfs_mknod(const char *path, mode_t mode, dev_t dev) {
     // Implementation of mknod function to create file node
     // ...
+    // create file
     return 0;
 }
 
 static int wfs_mkdir(const char *path, mode_t mode) {
     // Implementation of mkdir function to create a directory
     // ...
+    // create directory
     return 0;
 }
 
@@ -51,7 +54,7 @@ static int wfs_read(const char *path, char *buf, size_t size, off_t offset, stru
     
     int len;
     int ret = 0;
-    struct wfs_log_entry *file_entry = path_to_log_entry(path);
+    struct wfs_log_entry *file_entry = path_to_logentry(path);
 
     len = file_entry->inode.size;
 
@@ -77,18 +80,22 @@ static int wfs_read(const char *path, char *buf, size_t size, off_t offset, stru
 static int wfs_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
     // Implementation of write function to write data to a file
     // ...
+    // append one new logentry of itself
     return 0;
 }
 
 static int wfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
     // Implementation of readdir function to read a directory
     // ...
+    // ok
     return 0;
 }
 
 static int wfs_unlink(const char *path) {
     // Implementation of unlink function to remove a file
     // ...
+    // ok
+    // set links and deleted
     return 0;
 }
 
