@@ -36,9 +36,9 @@ struct wfs_log_entry {
     char data[];
 };
 
-struct wfs_inode *get_inode(unsigned int ino);
-unsigned long inode_for_name(char *name, struct wfs_log_entry *l);
-struct wfs_inode *path_to_inode(const char *path);
+unsigned int *path_to_inode_number(const char *path);
+struct wfs_log_entry *inode_number_to_log_entry(unsigned int inode_number);
+struct path_to_log_entry *path_to_log_entry(const char *path);
 
 struct wfs_private {
     int fd;

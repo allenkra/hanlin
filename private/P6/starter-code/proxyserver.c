@@ -75,13 +75,11 @@ void send_GetJob_response(int client_fd, char *path) {
 void serve_request(int client_fd, char* buffer) {
 
     // create a fileserver socket
-    pthread_mutex_lock(&mutex);
     int fileserver_fd = socket(PF_INET, SOCK_STREAM, 0);
     if (fileserver_fd == -1) {
         fprintf(stderr, "Failed to create a new socket: error %d: %s\n", errno, strerror(errno));
         exit(errno);
     }
-    pthread_mutex_unlock(&mutex);
 
     // create the full fileserver address
     struct sockaddr_in fileserver_address;
@@ -194,7 +192,6 @@ int server_fd;
  */
 void serve_forever(int *server_fd, int proxy_port) {
 
-    pthread_mutex_lock(&mutex);
 
     // create a socket to listen
     *server_fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -240,7 +237,6 @@ void serve_forever(int *server_fd, int proxy_port) {
     int client_fd;
 
 
-    pthread_mutex_unlock(&mutex);
 
     // FILE *log_file = fopen("server_listening_thread_log.txt", "w");
     // listening loop
@@ -281,20 +277,17 @@ void serve_forever(int *server_fd, int proxy_port) {
             pthread_mutex_unlock(&mutex);
             shutdown(client_fd, SHUT_WR);
             close(client_fd);
+            free(getjob);
             continue;            
         } 
+        free(getjob);
         pthread_mutex_unlock(&mutex);
         req_info.client_fd = client_fd;
         char *buffer_copy = strdup(buffer);
         req_info.buffer = buffer_copy;
-        // fprintf(log_file, "Parse results:\n");
-        // fprintf(log_file, "--------------\n");
-        // fprintf(log_file, "delay: %d\n", req_info.delay);
-        // fprintf(log_file, "client_fd: %d\n", req_info.client_fd);
-        // fprintf(log_file, "path: %s\n", req_info.path);
+
         int priority = get_priority_from_path(req_info.path);
-        // fprintf(log_file, "priority: %d\n", priority);
-        // fprintf(log_file, "--------------\n");
+
         /**
          * should work as produser
          * call add_work and cond_wait()
@@ -314,16 +307,10 @@ void serve_forever(int *server_fd, int proxy_port) {
          * should add_work()
         */
         add_work(pq, req_info, priority);
-        // fprintf(log_file, "Listening thread have added the work!\n");
         pthread_cond_signal(&add);
         pthread_mutex_unlock(&mutex);
 
 
-        // serve_request(client_fd);
-        
-        // close the connection to the client
-        // shutdown(client_fd, SHUT_WR);
-        // close(client_fd);
     }
 
     shutdown(*server_fd, SHUT_RDWR);
@@ -356,7 +343,6 @@ void *worker_thread(void *arg) {
         }
         // get work from pq
         get_work(pq, work);
-        // fprintf(log_file, "Worker thread have got the work!\n");
         // pthread_cond_signal(&empty);
         pthread_mutex_unlock(&mutex);
         // delay, canbe zero

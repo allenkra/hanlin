@@ -3,7 +3,6 @@
 #include <string.h>
 #include "safequeue.h"
 
-// 创建一个新的优先队列
 PriorityQueue* create_queue(int capacity) {
     PriorityQueue* pq = (PriorityQueue*)malloc(sizeof(PriorityQueue));
     pq->items = (PQItem*)malloc(sizeof(PQItem) * capacity);
@@ -37,14 +36,12 @@ void copy_info(request_info *a, request_info b) {
         a->buffer = NULL;
     }
 }
-// 重新分配队列的大小
 // void resizePriorityQueue(PriorityQueue* pq, int new_capacity) {
 //     pq->items = (PQItem*)realloc(pq->items, sizeof(PQItem) * new_capacity);
 //     pq->capacity = new_capacity;
 // }
 
 
-// 插入操作
 void add_work(PriorityQueue* pq, request_info value, int priority) {
     // if (pq->size == pq->capacity) {
     //     resizePriorityQueue(pq, pq->capacity * 2);

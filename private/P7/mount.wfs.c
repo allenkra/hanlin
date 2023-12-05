@@ -11,6 +11,18 @@
 #include <unistd.h>
 #include "wfs.h"
 
+void *disk = NULL;
+
+// input a path and return the inode number
+unsigned int *path_to_inode_number(const char *path){
+    struct wfs_log_entry *lep = NULL;
+    // begin with first entry
+    lep = (struct wfs_log_entry *)((char *)disk + sizeof( struct wfs_sb));
+
+    return lep->inode.inode_number;
+}
+
+
 static int wfs_getattr(const char *path, struct stat *stbuf) {
     // Implementation of getattr function to retrieve file attributes
     // ...
@@ -30,10 +42,37 @@ static int wfs_mkdir(const char *path, mode_t mode) {
 }
 
 static int wfs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
-    // Implementation of read function to read data from a file
-    // ...
-    return 0;
+    printf("Requested file: %s\n", path);
+
+    // Example: Let's assume 'path' points to a file in your custom filesystem.
+    // You would need to find this file within your filesystem's structure.
+    // This example assumes you have a function `my_fs_get_file_content`
+    // that retrieves the file's content based on the file's path.
+    
+    int len;
+    int ret = 0;
+    struct wfs_log_entry *file_entry = path_to_log_entry(path);
+
+    len = file_entry->inode.size;
+
+    if (file_entry == NULL) {
+        // File not found or error
+        return -ENOENT;
+    }
+
+    if (offset < len) {
+        if (offset + size > len) {
+            size = len - offset;
+        }
+        memcpy(buf, file_entry->data + offset, size);
+        ret = size;
+    } else {
+        ret = 0; // Offset is past the end of the file, overflow
+    }
+
+    return ret;
 }
+
 
 static int wfs_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
     // Implementation of write function to write data to a file
@@ -98,7 +137,7 @@ int main(int argc, char *argv[]) {
     }
 
     // mmap disk
-    void *disk = mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    disk = mmap(NULL, sb.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (disk == MAP_FAILED) {
         perror("Failed to map file");
         close(fd);
