@@ -94,11 +94,32 @@ struct wfs_log_entry *path_to_logentry(const char *path){
 }
 
 static int wfs_getattr(const char *path, struct stat *stbuf) {
-    // Implementation of getattr function to retrieve file attributes
-    // ...
-    // ok
-    return 0; // Return 0 on success
+    memset(stbuf, 0, sizeof(struct stat));
+
+    struct wfs_log_entry *logptr = path_to_logentry(path);
+    if (logptr == NULL) {
+        return -ENOENT;  // No such file or directory
+    }
+
+    // Assuming logptr->mode contains both file type and permissions
+    stbuf->st_mode = logptr->inode.mode;
+
+    // Set the number of hard links. Typically, this is 1 for files
+    stbuf->st_nlink = logptr->inode.links;
+
+    // Set the file size
+    stbuf->st_size = logptr->inode.size;
+
+    // Set the owner's user ID and group ID
+    stbuf->st_uid = logptr->inode.uid;
+    stbuf->st_gid = logptr->inode.gid;
+
+    // Set timestamps
+    stbuf->st_mtime = logptr->inode.mtime; // Modification time
+
+    return 0; // Success
 }
+
 
 static int wfs_mknod(const char *path, mode_t mode, dev_t dev) {
     // Implementation of mknod function to create file node
@@ -157,10 +178,41 @@ static int wfs_write(const char *path, const char *buf, size_t size, off_t offse
 }
 
 static int wfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
-    // Implementation of readdir function to read a directory
+    // Check if 'path' is a directory
     // ...
-    // ok
-    return 0;
+    // Iterate over each entry in the directory
+    // should fill filler with . and ..
+    struct wfs_log_entry *l = path_to_logentry(path);
+    if(l == NULL){
+        return -ENOENT;
+    }
+
+    // "."
+    struct stat st1;
+    memset(&st1, 0, sizeof(st1));
+    st1.st_ino = l->inode.inode_number; // inode number for the entry
+    st1.st_mode = l->inode.mode;      // DT_REG for files, DT_DIR for directories, etc.
+
+    if (filler(buf, ".", &st1, 0)) {
+    }
+
+
+    char *end_ptr = (char*)l + (sizeof(struct wfs_inode) + l->inode.size);
+    char *cur = l->data; // begin at dentry
+    struct wfs_dentry *d_ptr = (struct wfs_dentry*) cur;
+    for( ; cur < end_ptr; cur += DENTRY_SIZE ){
+        d_ptr = (struct wfs_dentry*) cur;
+        struct stat st;
+        memset(&st, 0, sizeof(st));
+        st.st_ino = d_ptr->inode_number; // inode number for the entry
+        st.st_mode = inodenum_to_logentry(d_ptr->inode_number)->inode.mode;        // DT_REG for files, DT_DIR for directories, etc.
+
+        // Use the filler function to add the entry to the buffer
+        if (filler(buf, d_ptr->name, &st, 0)) {
+        }
+    }
+
+    return 0; // Success
 }
 
 static int wfs_unlink(const char *path) {
