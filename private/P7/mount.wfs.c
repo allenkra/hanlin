@@ -12,16 +12,86 @@
 #include "wfs.h"
 
 void *disk = NULL;
+struct wfs_sb *superblock = NULL;
 
-// input a path and return the inode number
-unsigned int *path_to_inode_number(const char *path){
-    struct wfs_log_entry *lep = NULL;
-    // begin with first entry
-    lep = (struct wfs_log_entry *)((char *)disk + sizeof( struct wfs_sb));
-
-    return lep->inode.inode_number;
+int count_slashes(const char *str) {
+    int count = 0;
+    while (*str) { 
+        if (*str == '/') {
+            count++; 
+        }
+        str++; 
+    }
+    return count;
 }
 
+struct wfs_log_entry *inodenum_to_logentry(unsigned int ino){
+    char *ptr = NULL;
+    ptr = (char*)((char *)disk + sizeof( struct wfs_sb));
+    struct wfs_log_entry *lep = (struct wfs_log_entry *) ptr;
+    struct wfs_log_entry *final = NULL;
+    // begin with first entry
+    for(;ptr < (char*)disk + superblock->head; ptr += (sizeof(struct wfs_inode) + lep->inode.size)){
+        lep = (struct wfs_log_entry *) ptr;
+        if (lep->inode.inode_number == ino && lep->inode.deleted == 0){
+            final = lep;
+        }
+    }
+    // not found
+    return final;
+}
+
+
+unsigned long name_to_inodenum(char *name, struct wfs_log_entry *l){
+    char *end_ptr = (char*)l + (sizeof(struct wfs_inode) + l->inode.size);
+    char *cur = l->data; // begin at dentry
+    struct wfs_dentry *d_ptr = (struct wfs_dentry*) cur;
+    for( ; cur < end_ptr; cur += DENTRY_SIZE ){
+        d_ptr = (struct wfs_dentry*) cur;
+        if (strcmp(name, d_ptr->name) == 0){
+            return d_ptr->inode_number;
+        }
+    }
+    // not found
+    return -1;
+}
+
+
+struct wfs_log_entry *path_to_logentry(const char *path){
+
+    char *path_copy = strdup(path);
+    if (path_copy == NULL) {
+        perror("Failed to duplicate path string");
+        return NULL;
+    }
+    // int slashes = count_slashes(path);
+
+    unsigned long inodenum = 0;
+
+    struct wfs_log_entry *logptr = NULL;
+
+    char *token = strtok(path_copy, "/");
+    while (token != NULL) {
+        logptr = inodenum_to_logentry(inodenum);
+        if (logptr == NULL){
+            return NULL;
+        }
+        
+        if(logptr->inode.mode == S_IFDIR){
+            // directory
+            inodenum = name_to_inodenum(token, logptr);
+        }
+        else{
+            // file
+            // nothing to do
+        }
+        token = strtok(NULL, "/");
+    }
+    logptr = inodenum_to_logentry(inodenum);
+    free(path_copy); // 释放复制的字符串
+    return logptr;
+
+}
 
 static int wfs_getattr(const char *path, struct stat *stbuf) {
     // Implementation of getattr function to retrieve file attributes
@@ -34,6 +104,7 @@ static int wfs_mknod(const char *path, mode_t mode, dev_t dev) {
     // Implementation of mknod function to create file node
     // ...
     // create file
+    // append two new log, one for dir one for itself 
     return 0;
 }
 
@@ -41,6 +112,7 @@ static int wfs_mkdir(const char *path, mode_t mode) {
     // Implementation of mkdir function to create a directory
     // ...
     // create directory
+    // append two
     return 0;
 }
 
@@ -96,6 +168,7 @@ static int wfs_unlink(const char *path) {
     // ...
     // ok
     // set links and deleted
+    // append new entry of parent dir
     return 0;
 }
 
@@ -150,6 +223,8 @@ int main(int argc, char *argv[]) {
         close(fd);
         exit(1);
     }
+
+    superblock = (struct wfs_sb *)disk;
 
     // for (i = 0; i < argc; i++) {
     //     printf("argv[%d] = %s\n", i, argv[i]);

@@ -5,6 +5,7 @@
 #define MOUNT_WFS_H_
 
 #define MAX_FILE_NAME_LEN 32
+#define DENTRY_SIZE 40
 #define WFS_MAGIC 0xdeadbeef
 
 struct wfs_sb {
