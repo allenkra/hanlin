@@ -14,15 +14,31 @@
 void *disk = NULL;
 struct wfs_sb *superblock = NULL;
 
-int count_slashes(const char *str) {
-    int count = 0;
-    while (*str) { 
-        if (*str == '/') {
-            count++; 
-        }
-        str++; 
+char* extract_before_last_slash(const char *str) {
+    if (str == NULL) {
+        return NULL;
     }
-    return count;
+
+    // Find the last occurrence of '/'
+    const char *last_slash = strrchr(str, '/');
+    if (last_slash == NULL) {
+        return NULL; // No slash found
+    }
+
+    // Calculate the length of the substring before the last slash
+    size_t length = last_slash - str;
+
+    // Allocate memory for the new substring
+    char *result = malloc(length + 1); // +1 for the null terminator
+    if (result == NULL) {
+        return NULL; // Memory allocation failed
+    }
+
+    // Copy the substring into the new string
+    strncpy(result, str, length);
+    result[length] = '\0'; // Null-terminate the string
+
+    return result;
 }
 
 struct wfs_log_entry *inodenum_to_logentry(unsigned int ino){
@@ -47,14 +63,11 @@ unsigned long name_to_inodenum(char *name, struct wfs_log_entry *l){
     char *end_ptr = (char*)l + (sizeof(struct wfs_inode) + l->inode.size);
     char *cur = l->data; // begin at dentry
     struct wfs_dentry *d_ptr = (struct wfs_dentry*) cur;
-    // printf("logptr->data + logptr->inode.size = %ld\n",(unsigned long)(end_ptr));
     for( ; cur < end_ptr; cur += DENTRY_SIZE ){
         d_ptr = (struct wfs_dentry*) cur;
         if (strcmp(name, d_ptr->name) == 0){
             return d_ptr->inode_number;
         }
-        // printf("p = %ld\n",(unsigned long)cur);
-        // printf("logptr->data + logptr->inode.size = %ld\n",(unsigned long)(end_ptr));
     }
     printf("=========================\n");
     // not found
@@ -118,6 +131,18 @@ struct wfs_log_entry *path_to_logentry(const char *path){
     return logptr;
 
 }
+
+struct wfs_log_entry *path_to_parent_logentry(const char *path){
+    char* parent_path = extract_before_last_slash(path);
+    struct wfs_log_entry *logptr = path_to_logentry(parent_path);
+    if(logptr == NULL){
+        return NULL;
+    }
+    free(parent_path);
+    return logptr;
+}
+
+
 
 static int wfs_getattr(const char *path, struct stat *stbuf) {
     memset(stbuf, 0, sizeof(struct stat));
@@ -228,13 +253,16 @@ static int wfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
     struct wfs_dentry *d_ptr = (struct wfs_dentry*) cur;
     for( ; cur < end_ptr; cur += DENTRY_SIZE ){
         d_ptr = (struct wfs_dentry*) cur;
-        struct stat st;
-        memset(&st, 0, sizeof(st));
-        st.st_ino = d_ptr->inode_number; // inode number for the entry
-        st.st_mode = inodenum_to_logentry(d_ptr->inode_number)->inode.mode;        // DT_REG for files, DT_DIR for directories, etc.
+        if (inodenum_to_logentry(d_ptr->inode_number)->inode.deleted == 0){
+            // not deleted
+            struct stat st;
+            memset(&st, 0, sizeof(st));
+            st.st_ino = d_ptr->inode_number; // inode number for the entry
+            st.st_mode = inodenum_to_logentry(d_ptr->inode_number)->inode.mode;        // DT_REG for files, DT_DIR for directories, etc.
 
-        // Use the filler function to add the entry to the buffer
-        if (filler(buf, d_ptr->name, &st, 0)) {
+            // Use the filler function to add the entry to the buffer
+            if (filler(buf, d_ptr->name, &st, 0)) {
+            }
         }
     }
 
