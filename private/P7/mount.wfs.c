@@ -230,7 +230,7 @@ static int wfs_mknod(const char *path, mode_t mode, dev_t dev) {
     // *new_parent_log = *parent_log;
 
     struct wfs_dentry *new_dentry = (void*)((char*)new_parent_log->data + new_parent_log->inode.size);
-    strcpy(new_parent_log->data, file_name);
+    strcpy(new_dentry->name, file_name);
     new_dentry->inode_number = new_inodenum; 
 
     // update size and head
@@ -276,7 +276,7 @@ static int wfs_mkdir(const char *path, mode_t mode) {
     // *new_parent_log = *parent_log;
 
     struct wfs_dentry *new_dentry = (void*)((char*)new_parent_log->data + new_parent_log->inode.size);
-    strcpy(new_parent_log->data, file_name);
+    strcpy(new_dentry->name, file_name);
     new_dentry->inode_number = new_inodenum; 
 
     // update size and head
