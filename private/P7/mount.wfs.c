@@ -41,6 +41,22 @@ char* extract_before_last_slash(const char *str) {
     return result;
 }
 
+const char* path_to_file_name(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    // Find the last occurrence of '/'
+    const char *last_slash = strrchr(str, '/');
+    if (last_slash == NULL) {
+        return NULL; // No slash found
+    }
+
+    // Return the substring after the last slash
+    return last_slash + 1;
+}
+
+
 struct wfs_log_entry *inodenum_to_logentry(unsigned int ino){
     // printf("number = %d\n", ino);
     char *ptr = NULL;
@@ -58,6 +74,23 @@ struct wfs_log_entry *inodenum_to_logentry(unsigned int ino){
     return final;
 }
 
+unsigned int find_max_inodenum(){
+    // printf("number = %d\n", ino);
+    char *ptr = NULL;
+    ptr = (char*)((char *)disk + sizeof( struct wfs_sb));
+    struct wfs_log_entry *lep = (struct wfs_log_entry *) ptr;
+    unsigned int inodenum = 0;
+    // begin with first entry
+    for(;ptr < (char*)disk + superblock->head; ptr += (sizeof(struct wfs_inode) + lep->inode.size)){
+        lep = (struct wfs_log_entry *) ptr;
+        if (lep->inode.inode_number > inodenum && lep->inode.deleted == 0){
+            inodenum = lep->inode.inode_number;
+        }
+    }
+    // not found
+    printf("max inodenum = %d\n",inodenum);
+    return inodenum;
+}
 
 unsigned long name_to_inodenum(char *name, struct wfs_log_entry *l){
     char *end_ptr = (char*)l + (sizeof(struct wfs_inode) + l->inode.size);
@@ -69,7 +102,6 @@ unsigned long name_to_inodenum(char *name, struct wfs_log_entry *l){
             return d_ptr->inode_number;
         }
     }
-    printf("=========================\n");
     // not found
     return -1;
 }
@@ -134,10 +166,16 @@ struct wfs_log_entry *path_to_logentry(const char *path){
 
 struct wfs_log_entry *path_to_parent_logentry(const char *path){
     char* parent_path = extract_before_last_slash(path);
+    if(strlen(parent_path) == 0){
+        printf("path_to_parent_logentry = null %s\n", parent_path);
+        return inodenum_to_logentry(0);
+    }
     struct wfs_log_entry *logptr = path_to_logentry(parent_path);
     if(logptr == NULL){
+
         return NULL;
     }
+    printf("path_to_parent_logentry %s\n", parent_path);
     free(parent_path);
     return logptr;
 }
@@ -176,7 +214,45 @@ static int wfs_mknod(const char *path, mode_t mode, dev_t dev) {
     // Implementation of mknod function to create file node
     // ...
     // create file
-    // append two new log, one for dir one for itself 
+    // append two new log, one for dir one for itself
+    const char* file_name= path_to_file_name(path);
+    struct wfs_log_entry *parent_log = path_to_parent_logentry(path);
+    unsigned int new_inodenum = find_max_inodenum() + 1;
+    printf("filename is %s\n", file_name);
+    if(name_to_inodenum((char*)file_name, parent_log) != -1){
+        // already exist
+        return -EEXIST;
+    }
+    // append new parent log
+    struct wfs_log_entry *new_parent_log = (struct wfs_log_entry *)((char*)disk + superblock->head);
+
+    memcpy((char*)new_parent_log, (char*)parent_log, sizeof(struct wfs_log_entry) + parent_log->inode.size);
+    // *new_parent_log = *parent_log;
+
+    struct wfs_dentry *new_dentry = (void*)((char*)new_parent_log->data + new_parent_log->inode.size);
+    strcpy(new_parent_log->data, file_name);
+    new_dentry->inode_number = new_inodenum; 
+
+    // update size and head
+    new_parent_log->inode.size = new_parent_log->inode.size + DENTRY_SIZE;
+    superblock->head = superblock->head + (uint32_t)(sizeof(struct wfs_inode) + new_parent_log->inode.size);
+
+    // append new log for new inode 
+    struct wfs_log_entry *new_file_entry = (struct wfs_log_entry *)((char*)disk + superblock->head);
+    new_file_entry->inode.inode_number = new_inodenum;
+    new_file_entry->inode.atime = time(NULL);
+    new_file_entry->inode.mtime = time(NULL);
+    new_file_entry->inode.ctime = time(NULL);
+    new_file_entry->inode.deleted = 0;
+    new_file_entry->inode.flags = 0;
+    new_file_entry->inode.gid = getuid();
+    new_file_entry->inode.uid = getuid();
+    new_file_entry->inode.links = 1;
+    new_file_entry->inode.mode = S_IFREG;
+    new_file_entry->inode.size = 0;
+
+    superblock->head = superblock->head + (uint32_t)(sizeof(struct wfs_inode));
+
     return 0;
 }
 
@@ -185,6 +261,44 @@ static int wfs_mkdir(const char *path, mode_t mode) {
     // ...
     // create directory
     // append two
+    const char* file_name= path_to_file_name(path);
+    struct wfs_log_entry *parent_log = path_to_parent_logentry(path);
+    unsigned int new_inodenum = find_max_inodenum() + 1;
+
+    if(name_to_inodenum((char*)file_name, parent_log) != -1){
+        // already exist
+        printf("2e20e20e2j0j\n");
+        return -EEXIST;
+    }
+    // append new parent log
+    struct wfs_log_entry *new_parent_log = (struct wfs_log_entry *)((char*)disk + superblock->head);
+    memcpy((char*)new_parent_log, (char*)parent_log, sizeof(struct wfs_log_entry) + parent_log->inode.size);
+    // *new_parent_log = *parent_log;
+
+    struct wfs_dentry *new_dentry = (void*)((char*)new_parent_log->data + new_parent_log->inode.size);
+    strcpy(new_parent_log->data, file_name);
+    new_dentry->inode_number = new_inodenum; 
+
+    // update size and head
+    new_parent_log->inode.size = new_parent_log->inode.size + DENTRY_SIZE;
+    superblock->head = superblock->head + (uint32_t)(sizeof(struct wfs_inode) + new_parent_log->inode.size);
+
+    // append new log for new inode 
+    struct wfs_log_entry *new_file_entry = (struct wfs_log_entry *)((char*)disk + superblock->head);
+    new_file_entry->inode.inode_number = new_inodenum;
+    new_file_entry->inode.atime = time(NULL);
+    new_file_entry->inode.mtime = time(NULL);
+    new_file_entry->inode.ctime = time(NULL);
+    new_file_entry->inode.deleted = 0;
+    new_file_entry->inode.flags = 0;
+    new_file_entry->inode.gid = getuid();
+    new_file_entry->inode.uid = getuid();
+    new_file_entry->inode.links = 1;
+    new_file_entry->inode.mode = S_IFDIR;
+    new_file_entry->inode.size = 0;
+
+    superblock->head = superblock->head + (uint32_t)(sizeof(struct wfs_inode));
+
     return 0;
 }
 
@@ -234,6 +348,7 @@ static int wfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
     // Iterate over each entry in the directory
     // should fill filler with . and ..
     struct wfs_log_entry *l = path_to_logentry(path);
+    struct wfs_log_entry *parent = path_to_parent_logentry(path);
     if(l == NULL){
         return -ENOENT;
     }
@@ -247,6 +362,12 @@ static int wfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
     if (filler(buf, ".", &st1, 0)) {
     }
 
+    struct stat st2;
+    memset(&st2, 0, sizeof(st2));
+    st2.st_ino = parent->inode.inode_number;
+    st2.st_mode = l->inode.mode;
+    if (filler(buf, "..", &st2, 0)) {
+    }
 
     char *end_ptr = (char*)l + (sizeof(struct wfs_inode) + l->inode.size);
     char *cur = l->data; // begin at dentry
