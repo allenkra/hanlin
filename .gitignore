@@ -27,3 +27,5 @@ private/P7/disk
 private/P7/fsck.wfs
 private/P7/mkfs.wfs
 private/P7/mnt
+private/P7/prebuilt_disk copy
+.gitignore

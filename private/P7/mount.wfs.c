@@ -26,6 +26,7 @@ int count_slashes(const char *str) {
 }
 
 struct wfs_log_entry *inodenum_to_logentry(unsigned int ino){
+    // printf("number = %d\n", ino);
     char *ptr = NULL;
     ptr = (char*)((char *)disk + sizeof( struct wfs_sb));
     struct wfs_log_entry *lep = (struct wfs_log_entry *) ptr;
@@ -46,12 +47,16 @@ unsigned long name_to_inodenum(char *name, struct wfs_log_entry *l){
     char *end_ptr = (char*)l + (sizeof(struct wfs_inode) + l->inode.size);
     char *cur = l->data; // begin at dentry
     struct wfs_dentry *d_ptr = (struct wfs_dentry*) cur;
+    // printf("logptr->data + logptr->inode.size = %ld\n",(unsigned long)(end_ptr));
     for( ; cur < end_ptr; cur += DENTRY_SIZE ){
         d_ptr = (struct wfs_dentry*) cur;
         if (strcmp(name, d_ptr->name) == 0){
             return d_ptr->inode_number;
         }
+        // printf("p = %ld\n",(unsigned long)cur);
+        // printf("logptr->data + logptr->inode.size = %ld\n",(unsigned long)(end_ptr));
     }
+    printf("=========================\n");
     // not found
     return -1;
 }
@@ -70,25 +75,46 @@ struct wfs_log_entry *path_to_logentry(const char *path){
 
     struct wfs_log_entry *logptr = NULL;
 
+    // find root first
+    logptr = inodenum_to_logentry(inodenum);
+
+    puts(path);
+
     char *token = strtok(path_copy, "/");
     while (token != NULL) {
-        logptr = inodenum_to_logentry(inodenum);
+        // printf("token = %s    \n", token);
+
+        // logptr = inodenum_to_logentry(inodenum);
+
+        // printf("inode number is %d\n",logptr->inode.inode_number);
+        // printf("inode mode is %d\n",logptr->inode.mode);
+        // printf("inode size is %d\n",logptr->inode.size);
+        // struct wfs_dentry* data = (struct wfs_dentry*)logptr->data;
+
+        // for (struct wfs_dentry* p = data;p < data + logptr->inode.size; p+= DENTRY_SIZE){
+        //     printf("inode first dir dentry = %s\n", p->name);
+        //     printf("inode first dir dentry inodenumber = %lu\n", p->inode_number);
+
+        //     printf("p = %ld\n",(unsigned long)p);
+        //     printf("logptr->data + logptr->inode.size = %ld\n",(unsigned long)(logptr->data + logptr->inode.size));
+        // }
+
         if (logptr == NULL){
             return NULL;
         }
-        
-        if(logptr->inode.mode == S_IFDIR){
-            // directory
-            inodenum = name_to_inodenum(token, logptr);
+        printf("inode of dir = %lu\n",inodenum);
+        inodenum = name_to_inodenum(token, logptr);
+        if(inodenum == -1) {
+            return NULL;
         }
-        else{
-            // file
-            // nothing to do
-        }
+
+        logptr = inodenum_to_logentry(inodenum);
+
+
         token = strtok(NULL, "/");
     }
-    logptr = inodenum_to_logentry(inodenum);
     free(path_copy); // 释放复制的字符串
+    // printf("logentry of  %d\n",logptr->inode.inode_number);
     return logptr;
 
 }
