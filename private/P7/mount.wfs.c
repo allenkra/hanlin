@@ -248,7 +248,7 @@ static int wfs_mknod(const char *path, mode_t mode, dev_t dev) {
     new_file_entry->inode.gid = getuid();
     new_file_entry->inode.uid = getuid();
     new_file_entry->inode.links = 1;
-    new_file_entry->inode.mode = S_IFREG;
+    new_file_entry->inode.mode = mode | S_IFREG;
     new_file_entry->inode.size = 0;
 
     superblock->head = superblock->head + (uint32_t)(sizeof(struct wfs_inode));
@@ -294,7 +294,7 @@ static int wfs_mkdir(const char *path, mode_t mode) {
     new_file_entry->inode.gid = getuid();
     new_file_entry->inode.uid = getuid();
     new_file_entry->inode.links = 1;
-    new_file_entry->inode.mode = S_IFDIR;
+    new_file_entry->inode.mode = S_IFDIR | mode;
     new_file_entry->inode.size = 0;
 
     superblock->head = superblock->head + (uint32_t)(sizeof(struct wfs_inode));
