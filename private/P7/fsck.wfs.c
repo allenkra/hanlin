@@ -77,6 +77,9 @@ int main(int argc, char *argv[])
     for (unsigned int i = 0; i <= find_max_inodenum(); i++)
     {
         struct wfs_log_entry *entry = inodenum_to_logentry(i);
+        if(entry == NULL){
+            continue;
+        }
         size_t entry_size = sizeof(struct wfs_inode) + entry->inode.size;
         memmove(ptr, entry, entry_size);
         ptr += entry_size;
@@ -84,6 +87,10 @@ int main(int argc, char *argv[])
     memset(ptr, 0, (char *)disk + sb.st_size - ptr);
     // Update superblock->head to reflect the new end of the log
     superblock->head = ptr - (char *)disk;
+
+    if (munmap(disk, sb.st_size) == -1) {
+        perror("Failed to unmap memory");
+    }
     close(fd);
     return 0;
 }
