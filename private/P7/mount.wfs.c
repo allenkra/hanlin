@@ -119,8 +119,9 @@ int delete_dentry(unsigned int inodenum, struct wfs_log_entry *l){
             size_t move_size = end_ptr - (cur + DENTRY_SIZE);
             
             // Move subsequent dentries forward
-            memmove(cur, cur + DENTRY_SIZE, move_size);
-
+            if(move_size > 0){
+                memmove(cur, cur + DENTRY_SIZE, move_size);
+            }
             // Return success
             return 0;
         }
@@ -334,13 +335,13 @@ static int wfs_read(const char *path, char *buf, size_t size, off_t offset, stru
     int len;
     int ret = 0;
     struct wfs_log_entry *file_entry = path_to_logentry(path);
-
-    len = file_entry->inode.size;
-
     if (file_entry == NULL) {
         // File not found or error
         return -ENOENT;
     }
+
+    len = file_entry->inode.size;
+
 
     if (offset < len) {
         if (offset + size > len) {
@@ -417,7 +418,7 @@ static int wfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_
     struct wfs_dentry *d_ptr = (struct wfs_dentry*) cur;
     for( ; cur < end_ptr; cur += DENTRY_SIZE ){
         d_ptr = (struct wfs_dentry*) cur;
-        if (inodenum_to_logentry(d_ptr->inode_number)->inode.deleted == 0){
+        if (inodenum_to_logentry(d_ptr->inode_number) != NULL){
             // not deleted
             struct stat st;
             memset(&st, 0, sizeof(st));
@@ -439,31 +440,29 @@ static int wfs_unlink(const char *path) {
     // ok
     // set links and deleted
     // append new entry of parent dir
-    // struct wfs_log_entry *log_ptr = path_to_logentry(path);
-    // if(log_ptr == NULL){
-    //     return -ENOENT;
-    // }
-    // log_ptr->inode.deleted = 1;
+    struct wfs_log_entry *log_ptr = path_to_logentry(path);
+    if(log_ptr == NULL){
+        return -ENOENT;
+    }
+    struct wfs_log_entry *parent_log = path_to_parent_logentry(path);
+    if(parent_log == NULL){
+        return -ENONET;
+    }
+    log_ptr->inode.deleted = 1;
 
-    // struct wfs_log_entry *parent_log = path_to_parent_logentry(path);
-    // if(parent_log == NULL){
-    //     return -ENONET;
-    // }
+    struct wfs_log_entry *new_log = (struct wfs_log_entry*)((char*)disk + superblock->head);
 
-    // struct wfs_log_entry *new_log = (struct wfs_log_entry*)((char*)disk + superblock->head);
+    memcpy((char*)new_log, (char*)parent_log, sizeof(struct wfs_inode) + parent_log->inode.size);
 
-    // memcpy((char*)new_log, (char*)log_ptr, sizeof(struct wfs_inode));
+    if(delete_dentry(log_ptr->inode.inode_number, new_log) == -1){
+        return -ENONET;
+    }
 
-    // if(delete_dentry(log_ptr->inode.inode_number, new_log) == -1){
-    //     return -ENONET;
-    // }
+    new_log->inode.size = parent_log->inode.size - DENTRY_SIZE;
+    new_log->inode.mtime = time(NULL);
 
-    // new_log->inode.size = log_ptr->inode.size - DENTRY_SIZE;
-    // new_log->inode.mtime = time(NULL);
+    superblock->head = superblock->head + (uint32_t)(sizeof(struct wfs_inode) ) + new_log->inode.size;
 
-    // superblock->head = superblock->head + (uint32_t)(sizeof(struct wfs_inode) ) + new_log->inode.size;
-
-    
     return 0;
 }
 
