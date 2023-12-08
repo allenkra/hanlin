@@ -41,12 +41,6 @@ struct wfs_log_entry *inodenum_to_logentry(unsigned int ino);
 unsigned long name_to_inodenum(char *name, struct wfs_log_entry *l);
 struct wfs_log_entry *path_to_logentry(const char *path);
 
-struct wfs_private {
-    int fd;
-    void *disk;
-    unsigned long len;
-    size_t head;
-};
 
 
 
