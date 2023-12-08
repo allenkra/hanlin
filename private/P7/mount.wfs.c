@@ -13,6 +13,7 @@
 
 void *disk = NULL;
 struct wfs_sb *superblock = NULL;
+uint32_t max_head;
 
 char* extract_before_last_slash(const char *str) {
     if (str == NULL) {
@@ -247,6 +248,9 @@ static int wfs_mknod(const char *path, mode_t mode, dev_t dev) {
         return -EEXIST;
     }
     // append new parent log
+    if (superblock->head + (uint32_t)(sizeof(struct wfs_inode) + parent_log->inode.size + DENTRY_SIZE + (uint32_t)(sizeof(struct wfs_inode))) > max_head){
+        return -ENOSPC;
+    }
     struct wfs_log_entry *new_parent_log = (struct wfs_log_entry *)((char*)disk + superblock->head);
 
     memcpy((char*)new_parent_log, (char*)parent_log, sizeof(struct wfs_inode) + parent_log->inode.size);
@@ -291,6 +295,9 @@ static int wfs_mkdir(const char *path, mode_t mode) {
         // already exist
         printf("2e20e20e2j0j\n");
         return -EEXIST;
+    }
+    if (superblock->head + (uint32_t)(sizeof(struct wfs_inode) + parent_log->inode.size + DENTRY_SIZE + (uint32_t)(sizeof(struct wfs_inode))) > max_head){
+        return -ENOSPC;
     }
     // append new parent log
     struct wfs_log_entry *new_parent_log = (struct wfs_log_entry *)((char*)disk + superblock->head);
@@ -376,6 +383,9 @@ static int wfs_write(const char *path, const char *buf, size_t size, off_t offse
         // update size
         new_size = offset + size;
     }
+    if(superblock->head + (uint32_t)(sizeof(struct wfs_inode) ) + new_size > max_head){
+        return -ENOSPC;
+    }
     struct wfs_log_entry *new_log = (struct wfs_log_entry*)((char*)disk + superblock->head);
     memcpy((char*)new_log, (char*)old_log, sizeof(struct wfs_inode) + old_log->inode.size);
     new_log->inode.size = new_size;
@@ -450,6 +460,9 @@ static int wfs_unlink(const char *path) {
     }
     log_ptr->inode.deleted = 1;
 
+    if(superblock->head + (uint32_t)(sizeof(struct wfs_inode) ) + parent_log->inode.size - DENTRY_SIZE > max_head){
+        return -ENOSPC;
+    }
     struct wfs_log_entry *new_log = (struct wfs_log_entry*)((char*)disk + superblock->head);
 
     memcpy((char*)new_log, (char*)parent_log, sizeof(struct wfs_inode) + parent_log->inode.size);
@@ -516,6 +529,7 @@ int main(int argc, char *argv[]) {
         close(fd);
         exit(1);
     }
+    max_head = sb.st_size;
 
     superblock = (struct wfs_sb *)disk;
 
